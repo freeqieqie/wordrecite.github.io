@@ -1,0 +1,472 @@
+<html><head><base href="./">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>童行六年级上单词默写训练</title>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        background-color: #f0f8ff;
+    }
+    .container {
+        text-align: center;
+        background-color: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        margin-top: 2rem;
+    }
+    h1 {
+        color: #333;
+        margin-bottom: 1rem;
+        font-size: 15px;
+        font-weight: bold;
+    }
+    .unit-tabs {
+        display: flex;
+        justify-content: flex-end; /* 居右对齐 */
+        flex-wrap: wrap; /* 允许换行 */
+        margin-bottom: 2rem;
+    }
+    .unit-tab {
+        font-size: 1rem;
+        margin: 0.5rem; /* 保持原有的间距 */
+        padding: 0.5rem 1rem;
+        background-color: #e0e0e0;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width: auto; /* 设置宽度为自动，适配文字长度 */
+    }
+    .unit-tab:hover, .unit-tab.active {
+        background-color: #4CAF50;
+        color: white;
+    }
+    .meaning {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: #4a4a4a;
+    }
+    .spelling-area {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 1rem 0;
+        height: 100px; /* Set a fixed height */
+    }
+    .answer {
+        display: flex;
+        justify-content: center;
+        align-items: center; /* Center letters vertically */
+        min-height: 40px;
+        height: 40px; /* Set a fixed height */
+        margin-bottom: 1rem;
+    }
+    .answer-line {
+        width: 200px;
+        height: 2px;
+        background-color: #333;
+        margin-bottom: 1rem;
+    }
+    .letters {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        height: 60px; /* Set a fixed height */
+        overflow-y: auto; /* Add scrolling if needed */
+        gap: 0.5rem; /* Add gap between letters */
+    }
+    .letter {
+        font-size: 1.5rem;
+        margin: 0.25rem;
+        width: 40px; /* Fixed width */
+        height: 40px; /* Fixed height to match width */
+        padding: 0; /* Remove padding */
+        background-color: #e0e0e0;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        display: flex; /* Use flexbox for centering */
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+    }
+    .letter:hover {
+        background-color: #d0d0d0;
+    }
+    .button-container {
+        margin-top: 1rem;
+    }
+    .btn {
+        font-size: 1rem;
+        margin: 0.5rem;
+        padding: 0.5rem 1rem;
+        background-color: yellow;
+        color: black;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .btn:hover {
+        opacity: 0.8;
+    }
+    .btn-check.correct {
+        background-color: green;
+        color: white;
+    }
+    .btn-check.incorrect {
+        background-color: red;
+        color: white;
+    }
+    .btn-next.correct {
+        background-color: yellow;
+        color: black;
+    }
+    .btn-next.incorrect {
+        background-color: blue;
+        color: white;
+    }
+    .progress {
+        margin-top: 1rem;
+        font-size: 1.2rem;
+        color: #4a4a4a;
+    }
+    .footer {
+        margin-top: 2rem;
+        font-size: 0.8rem;
+        color: #777;
+        text-align: center;
+    }
+    </style>
+    </head>
+    <body>
+    <h1>童行六年级上单词默写训练</h1>
+    <div class="button-container">
+        <button class="btn" id="homeBtn">返回主页</button>
+        <span id="timer" class="progress">00:00</span> <!-- 添加计时器 -->
+    </div>
+    <div class="unit-tabs">
+        <button class="unit-tab active" data-unit="1">Unit 1</button>
+        <button class="unit-tab" data-unit="2">Unit 2</button>
+        <button class="unit-tab" data-unit="3">Unit 3</button>
+        <button class="unit-tab" data-unit="4">Unit 4</button>
+        <button class="unit-tab" data-unit="5">Unit 5</button>
+        <button class="unit-tab" data-unit="6">Unit 6</button>
+    </div>
+    <div class="container">
+        <div class="meaning" id="meaning"></div>
+        <div class="spelling-area">
+            <div class="answer" id="answer"></div>
+            <div class="answer-line"></div>
+        </div>
+        <div class="letters" id="letters"></div>
+        <div class="button-container">
+            <button class="btn btn-check" id="checkBtn">检查</button>
+            <button class="btn btn-next" id="nextBtn">恭喜完成</button>
+        </div>
+    </div>
+    <div id="progress" class="progress"></div>
+    <footer class="footer">
+        <p>本程序由童行宋老师使用AI完成制作</p>
+    </footer>
+    <script>
+    const units = {
+        1: [
+            { word: "science", meaning: "科学" },
+            { word: "museum", meaning: "博物馆" },
+            { word: "post office", meaning: "邮局" },
+            { word: "bookstore", meaning: "书店" },
+            { word: "cinema", meaning: "电影院" },
+            { word: "hospital", meaning: "医院" },
+            { word: "crossing", meaning: "十字路口" },
+            { word: "turn", meaning: "转向" },
+            { word: "left", meaning: "左" },
+            { word: "straight", meaning: "直的" },
+            { word: "right", meaning: "右" },
+            { word: "ask", meaning: "问" },
+            { word: "sir", meaning: "先生" },
+            { word: "interesting", meaning: "令人感兴趣的" },
+            { word: "restaurant", meaning: "餐馆" },
+            { word: "follow", meaning: "跟着" },
+            { word: "far", meaning: "远的" },
+            { word: "tell", meaning: "告诉" }
+        ],
+        2: [
+            { word: "on foot", meaning: "步行" },
+            { word: "by bus", meaning: "借助公交车" },
+            { word: "plane", meaning: "飞机" },
+            { word: "taxi", meaning: "出租车" },
+            { word: "ship", meaning: "轮船" },
+            { word: "subway", meaning: "地铁" },
+            { word: "train", meaning: "火车" },
+            { word: "slow", meaning: "慢的" },
+            { word: "down", meaning: "下来" },
+            { word: "slow down", meaning: "慢下来" },
+            { word: "stop", meaning: "停止" },
+            { word: "Mrs", meaning: "夫人 女士" },
+            { word: "early", meaning: "早的" },
+            { word: "helmet", meaning: "头盔" },
+            { word: "must", meaning: "必须" },
+            { word: "wear", meaning: "穿戴" },
+            { word: "attention", meaning: "注意" },
+            { word: "traffic", meaning: "交通" },
+            { word: "fast", meaning: "快速的" }
+        ],
+        3: [
+            { word: "visit", meaning: "拜访" },
+            { word: "film", meaning: "电影 胶片" },
+            { word: "see a film", meaning: "看一场电影" },
+            { word: "trip", meaning: "旅行(名)" },
+            { word: "take a trip", meaning: "参加一个旅行" },
+            { word: "supermarket", meaning: "超市" },
+            { word: "evening", meaning: "晚上 傍晚" },
+            { word: "tonight", meaning: "今晚" },
+            { word: "tomorrow", meaning: "明天" },
+            { word: "next week", meaning: "下周" },
+            { word: "dictionary", meaning: "字典" },
+            { word: "comic", meaning: "滑稽的" },
+            { word: "comic book", meaning: "漫画书" },
+            { word: "word book", meaning: "单词书" },
+            { word: "postcard", meaning: "明信片" },
+            { word: "lesson", meaning: "课" },
+            { word: "space", meaning: "太空 空间" },
+            { word: "travel", meaning: "旅行(动)" },
+            { word: "half", meaning: "一半" },
+            { word: "price", meaning: "价格" },
+            { word: "together", meaning: "一起" },
+            { word: "moon", meaning: "月亮" }
+        ],
+        4: [
+            { word: "studies", meaning: "学习(三单形式)" },
+            { word: "puzzle", meaning: "迷 难题" },
+            { word: "hiking", meaning: "徒步 远足" },
+            { word: "hobby", meaning: "爱好" },
+            { word: "idea", meaning: "主意" },
+            { word: "goal", meaning: "目标 进球" },
+            { word: "join", meaning: "加入" },
+            { word: "club", meaning: "俱乐部" },
+            { word: "share", meaning: "分享" }
+        ],
+        5: [
+            { word: "factory", meaning: "工厂" },
+            { word: "worker", meaning: "工人" },
+            { word: "postman", meaning: "邮递员" },
+            { word: "businessman", meaning: "商人" },
+            { word: "police officer", meaning: "警官" },
+            { word: "fisherman", meaning: "渔民" },
+            { word: "scientist", meaning: "科学家" },
+            { word: "pilot", meaning: "飞行员" },
+            { word: "coach", meaning: "教练 长途汽车" },
+            { word: "country", meaning: "国家" },
+            { word: "head teacher", meaning: "校长" },
+            { word: "sea", meaning: "大海" },
+            { word: "stay", meaning: "停留" },
+            { word: "university", meaning: "大学" },
+            { word: "gym", meaning: "体育馆" },
+            { word: "if", meaning: "如果" },
+            { word: "reporter", meaning: "报导员 记者" },
+            { word: "use", meaning: "使用" },
+            { word: "type", meaning: "类型" },
+            { word: "quickly", meaning: "快速地" }
+        ],
+        6: [
+            { word: "angry", meaning: "生气的" },
+            { word: "afraid", meaning: "害怕的" },
+            { word: "sad", meaning: "伤心的" },
+            { word: "worried", meaning: "担心的" },
+            { word: "happy", meaning: "幸福的" },
+            { word: "see a doctor", meaning: "看医生" },
+            { word: "wear", meaning: "穿戴" },
+            { word: "more", meaning: "更多" },
+            { word: "deep breath", meaning: "深呼吸" },
+            { word: "take a deep breath", meaning: "做一次深呼吸" },
+            { word: "count", meaning: "数数" },
+            { word: "chase", meaning: "追逐" },
+            { word: "mice", meaning: "老鼠(复数)" },
+            { word: "bad", meaning: "坏的 糟糕的" },
+            { word: "hurt", meaning: "受伤" },
+            { word: "ill", meaning: "生病的" },
+            { word: "wrong", meaning: "错误的" },
+            { word: "should", meaning: "应该" },
+            { word: "feel", meaning: "感觉(动)" },
+            { word: "well", meaning: "好的(副)" },
+            { word: "sit", meaning: "坐" },
+            { word: "grass", meaning: "草地" },
+            { word: "hear", meaning: "听见" },
+            { word: "ant", meaning: "蚂蚁" },
+            { word: "worry", meaning: "担心" },
+            { word: "stuck", meaning: "卡住" },
+            { word: "mud", meaning: "泥土" },
+            { word: "pull", meaning: "拉" },
+            { word: "everyone", meaning: "每个人" }
+        ]
+    };
+    
+    let currentUnit = 1;
+    let currentWordIndex = 0;
+    let currentWord;
+    
+    const lettersContainer = document.getElementById('letters');
+    const answerContainer = document.getElementById('answer');
+    const meaningElement = document.getElementById('meaning');
+    const checkBtn = document.getElementById('checkBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const unitTabs = document.querySelectorAll('.unit-tab');
+    
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+    
+    function displayWord() {
+        currentWord = units[currentUnit][currentWordIndex];
+        meaningElement.textContent = `${currentWord.meaning}`;
+        const shuffledLetters = shuffleArray([...currentWord.word]);
+        
+        lettersContainer.innerHTML = '';
+        answerContainer.innerHTML = '';
+        
+        shuffledLetters.forEach(letter => {
+            const letterButton = document.createElement('button');
+            letterButton.className = 'letter';
+            letterButton.textContent = letter;
+            letterButton.addEventListener('click', () => moveLetter(letterButton));
+            lettersContainer.appendChild(letterButton);
+        });
+    
+        resetButtons();
+        updateProgress();
+    }
+    
+    function updateProgress() {
+        const progressElement = document.getElementById('progress');
+        const totalWords = units[currentUnit].length;
+        progressElement.textContent = `${currentWordIndex + 1}/${totalWords}`;
+    }
+    
+    function moveLetter(letterButton) {
+        answerContainer.appendChild(letterButton);
+        letterButton.removeEventListener('click', () => moveLetter(letterButton));
+        letterButton.addEventListener('click', () => returnLetter(letterButton));
+        startTimer(); // 开始计时
+    }
+    
+    function returnLetter(letterButton) {
+        lettersContainer.appendChild(letterButton);
+        letterButton.removeEventListener('click', () => returnLetter(letterButton));
+        letterButton.addEventListener('click', () => moveLetter(letterButton));
+    }
+    
+    function checkAnswer() {
+        const userAnswer = Array.from(answerContainer.children).map(child => child.textContent).join('');
+        if (userAnswer === currentWord.word) {
+            checkBtn.textContent = "正确";
+            checkBtn.classList.add('correct');
+            nextBtn.textContent = "下一个";
+            nextBtn.classList.add('correct');
+            nextBtn.classList.remove('incorrect');
+            playAudio(currentWord.word);
+            
+            // 检查是否完成当前单元
+            if (currentWordIndex === units[currentUnit].length - 1) {
+                nextBtn.textContent = "恭喜完成"; // 修改按钮文本
+                clearInterval(timerInterval); // 停止计时
+            }
+        } else {
+            checkBtn.textContent = "错误";
+            checkBtn.classList.add('incorrect');
+            nextBtn.textContent = "请订正";
+            nextBtn.classList.add('incorrect');
+            nextBtn.classList.remove('correct');
+            setTimeout(() => {
+                checkBtn.textContent = "检查";
+                checkBtn.classList.remove('incorrect');
+            }, 2000);
+        }
+    }
+    
+    function nextWord() {
+        if (checkBtn.textContent === "正确") {
+            currentWordIndex = (currentWordIndex + 1) % units[currentUnit].length;
+            displayWord();
+            resetButtons();
+        } else if (nextBtn.textContent === "恭喜完成") {
+            // 不执行任何操作，直接返回
+            return;
+        }
+    }
+    
+    function playAudio(word) {
+        const audio = new Audio(`https://dict.youdao.com/dictvoice?audio=${word}&type=1`);
+        audio.play().catch(error => console.error('Error playing audio:', error));
+    }
+    
+    function changeUnit(unit) {
+        resetTimer(); // 重置计时器
+        currentUnit = unit;
+        currentWordIndex = 0;
+        displayWord();
+        unitTabs.forEach(tab => tab.classList.remove('active'));
+        document.querySelector(`.unit-tab[data-unit="${unit}"]`).classList.add('active');
+        // 不再在这里调用 startTimer()
+    }
+    
+    function resetButtons() {
+        checkBtn.textContent = "检查";
+        checkBtn.classList.remove('correct', 'incorrect');
+        nextBtn.textContent = "下一个";
+        nextBtn.classList.remove('correct', 'incorrect');
+    }
+    
+    function resetTimer() {
+        clearInterval(timerInterval); // 停止计时
+        seconds = 0; // 重置计时器
+        document.getElementById('timer').textContent = "00:00"; // 显示为零
+        timerInterval = null; // 清空计时器变量
+    }
+    
+    checkBtn.addEventListener('click', checkAnswer);
+    nextBtn.addEventListener('click', () => {
+        if (nextBtn.textContent === "恭喜完成") {
+            // 不执行任何操作，直接返回
+            return;
+        }
+        nextWord(); // 仅在不是"恭喜完成"时调用 nextWord
+    });
+    
+    unitTabs.forEach(tab => {
+        tab.addEventListener('click', () => changeUnit(parseInt(tab.dataset.unit)));
+    });
+    
+    displayWord();
+    
+    let timerInterval;
+    let seconds = 0;
+    
+    document.getElementById('homeBtn').addEventListener('click', () => {
+        window.location.href = './index.html'; // 使用相对路径返回主页
+    });
+    
+    function startTimer() {
+        if (!timerInterval) {
+            timerInterval = setInterval(() => {
+                seconds++;
+                const minutes = String(Math.floor(seconds / 60)).padStart(2, '0');
+                const secs = String(seconds % 60).padStart(2, '0');
+                document.getElementById('timer').textContent = `${minutes}:${secs}`;
+            }, 1000);
+        }
+    }
+    </script>
+    </body>
+    </html>

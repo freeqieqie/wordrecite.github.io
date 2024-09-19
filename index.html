@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>童行单词默写训练</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f8ff;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        .unit-tabs {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .unit-tab {
+            font-size: 1rem;
+            margin: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: #e0e0e0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 200px; /* 设置按钮宽度 */
+        }
+        .unit-tab:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .unit-row {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+    <script>
+        function handleClick(unit) {
+            if (unit === '新三年级上') {
+                location.href = 'pep3Awordsreciting.html';  // 更新为新的文件名
+            } else if (unit === '六年级上') {
+                location.href = 'pep6Awordsreciting.html';  // 添加新的链接
+            } else {
+                alert('该年级暂时没有单词');
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>童行单词默写训练</h1>
+    <div class="unit-tabs">
+        <div class="unit-row">
+            <button class="unit-tab" onclick="handleClick('新三年级上')">新三年级上</button>
+            <button class="unit-tab" onclick="handleClick('新三年级下')">新三年级下</button>
+        </div>
+        <div class="unit-row">
+            <button class="unit-tab" onclick="handleClick('四年级上')">四年级上</button>
+            <button class="unit-tab" onclick="handleClick('四年级下')">四年级下</button>
+        </div>
+        <div class="unit-row">
+            <button class="unit-tab" onclick="handleClick('五年级上')">五年级上</button>
+            <button class="unit-tab" onclick="handleClick('五年级下')">五年级下</button>
+        </div>
+        <div class="unit-row">
+            <button class="unit-tab" onclick="handleClick('六年级上')">六年级上</button>
+            <button class="unit-tab" onclick="handleClick('六年级下')">六年级下</button>
+        </div>
+    </div>
+</body>
+</html>
