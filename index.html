@@ -46,9 +46,17 @@
     <script>
         function handleClick(unit) {
             if (unit === '新三年级上') {
-                location.href = 'pep3Awordsreciting.html';  // 更新为新的文件名
+                location.href = './pep3Awordsreciting.html';  // 修改为相对路径
+            } else if (unit === '新三年级下') {
+                location.href = './pep3Bwordsreciting.html';  // 添加新链接
+            } else if (unit === '四年级下') {
+                location.href = './pep4Bwordsreciting.html';  // 添加新链接
+            } else if (unit === '五年级下') {
+                location.href = './pep5Bwordsreciting.html';  // 添加新链接
             } else if (unit === '六年级上') {
-                location.href = 'pep6Awordsreciting.html';  // 添加新的链接
+                location.href = './pep6Awordsreciting.html';  // 修改为相对路径
+            } else if (unit === '六年级下') {
+                location.href = './pep6Bwordsreciting.html';  // 修改为相对路径
             } else {
                 alert('该年级暂时没有单词');
             }

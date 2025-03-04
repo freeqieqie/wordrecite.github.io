@@ -1,7 +1,7 @@
 <html><head><base href="./">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>童行六年级上单词默写训练</title>
+    <title>童行六年级下单词默写训练</title>
     <style>
     body {
         font-family: Arial, sans-serif;
@@ -187,7 +187,7 @@
     </style>
     </head>
     <body>
-    <h1>童行六年级上单词默写训练</h1>
+    <h1>童行六年级下单词默写训练</h1>
     <div class="button-container">
         <button class="btn" id="homeBtn">返回主页</button>
         <span id="timer" class="progress">00:00</span> <!-- 添加计时器 -->
@@ -197,8 +197,7 @@
         <button class="unit-tab" data-unit="2">Unit 2</button>
         <button class="unit-tab" data-unit="3">Unit 3</button>
         <button class="unit-tab" data-unit="4">Unit 4</button>
-        <button class="unit-tab" data-unit="5">Unit 5</button>
-        <button class="unit-tab" data-unit="6">Unit 6</button>
+
     </div>
     <div class="container">
         <div class="meaning" id="meaning"></div>
@@ -219,133 +218,104 @@
     <script>
     const units = {
         1: [
-            { word: "science", meaning: "科学" },
-            { word: "museum", meaning: "博物馆" },
-            { word: "post office", meaning: "邮局" },
-            { word: "bookstore", meaning: "书店" },
-            { word: "cinema", meaning: "电影院" },
-            { word: "hospital", meaning: "医院" },
-            { word: "crossing", meaning: "十字路口" },
-            { word: "turn", meaning: "转向" },
-            { word: "left", meaning: "左" },
-            { word: "straight", meaning: "直的" },
-            { word: "right", meaning: "右" },
-            { word: "ask", meaning: "问" },
-            { word: "sir", meaning: "先生" },
-            { word: "interesting", meaning: "令人感兴趣的" },
-            { word: "restaurant", meaning: "餐馆" },
-            { word: "follow", meaning: "跟着" },
-            { word: "far", meaning: "远的" },
-            { word: "tell", meaning: "告诉" }
+            { word: "younger", meaning: "更年轻的" },
+            { word: "older", meaning: "更老的" },
+            { word: "taller", meaning: "更高的" },
+            { word: "shorter", meaning: "更短的" },
+            { word: "longer", meaning: "更长的" },
+            { word: "thinner", meaning: "更瘦的" },
+            { word: "heavier", meaning: "更重的" },
+            { word: "bigger", meaning: "更大的" },
+            { word: "smaller", meaning: "更小的" },
+            { word: "stronger", meaning: "更强壮的" },
+            { word: "dinosaur", meaning: "恐龙" },
+            { word: "hall", meaning: "大厅" },
+            { word: "metre", meaning: "米" },
+            { word: "meter", meaning: "米" },
+            { word: "than", meaning: "比" },
+            { word: "both", meaning: "两者都" },
+            { word: "kilogram", meaning: "千克" },
+            { word: "countryside", meaning: "乡村" },
+            { word: "lower", meaning: "较低的" },
+            { word: "shadow", meaning: "影子" },
+            { word: "smarter", meaning: "更聪明的" },
+            { word: "become", meaning: "变成" }
+
         ],
         2: [
-            { word: "on foot", meaning: "步行" },
-            { word: "by bus", meaning: "借助公交车" },
-            { word: "plane", meaning: "飞机" },
-            { word: "taxi", meaning: "出租车" },
-            { word: "ship", meaning: "轮船" },
-            { word: "subway", meaning: "地铁" },
-            { word: "train", meaning: "火车" },
-            { word: "slow", meaning: "慢的" },
-            { word: "down", meaning: "下来" },
-            { word: "slow down", meaning: "慢下来" },
-            { word: "stop", meaning: "停止" },
-            { word: "Mrs", meaning: "夫人 女士" },
-            { word: "early", meaning: "早的" },
-            { word: "helmet", meaning: "头盔" },
-            { word: "must", meaning: "必须" },
-            { word: "wear", meaning: "穿戴" },
-            { word: "attention", meaning: "注意" },
-            { word: "traffic", meaning: "交通" },
-            { word: "fast", meaning: "快速的" }
+            { word: "cleaned", meaning: "打扫了" },
+            { word: "stayed", meaning: "呆在了" },
+            { word: "washed", meaning: "洗了" },
+            { word: "had", meaning: "有了" },
+            { word: "had a cold", meaning: "感冒了" },
+            { word: "slept", meaning: "睡觉了" },
+            { word: "read", meaning: "读了" },
+            { word: "saw", meaning: "看见了" },
+            { word: "last", meaning: "最后一个" },
+            { word: "yesterday", meaning: "昨天" },
+            { word: "before", meaning: "在...之前" },
+            { word: "drank", meaning: "喝了" },
+            { word: "show", meaning: "展示" },
+            { word: "magazine", meaning: "杂志" },
+            { word: "better", meaning: "更好的" },
+            { word: "faster", meaning: "更快地" },
+            { word: "hotel", meaning: "酒店" },
+            { word: "fixed", meaning: "修理好了" },
+            { word: "broken", meaning: "坏掉了" },
+            { word: "lamp", meaning: "台灯" },
+            { word: "loud", meaning: "响亮" },
+            { word: "enjoy", meaning: "享受" },
+            { word: "stay", meaning: "停留" }
         ],
         3: [
-            { word: "visit", meaning: "拜访" },
-            { word: "film", meaning: "电影 胶片" },
-            { word: "see a film", meaning: "看一场电影" },
-            { word: "trip", meaning: "旅行(名)" },
-            { word: "take a trip", meaning: "参加一个旅行" },
-            { word: "supermarket", meaning: "超市" },
-            { word: "evening", meaning: "晚上 傍晚" },
-            { word: "tonight", meaning: "今晚" },
-            { word: "tomorrow", meaning: "明天" },
-            { word: "next week", meaning: "下周" },
-            { word: "dictionary", meaning: "字典" },
-            { word: "comic", meaning: "滑稽的" },
-            { word: "comic book", meaning: "漫画书" },
-            { word: "word book", meaning: "单词书" },
-            { word: "postcard", meaning: "明信片" },
-            { word: "lesson", meaning: "课" },
-            { word: "space", meaning: "太空 空间" },
-            { word: "travel", meaning: "旅行(动)" },
-            { word: "half", meaning: "一半" },
-            { word: "price", meaning: "价格" },
-            { word: "together", meaning: "一起" },
-            { word: "moon", meaning: "月亮" }
+            { word: "went", meaning: "去" },
+            { word: "camp", meaning: "营地" },
+            { word: "went camping", meaning: "去露营" },
+            { word: "fish", meaning: "鱼" },
+            { word: "went fishing", meaning: "去钓鱼" },
+            { word: "rode", meaning: "骑" },
+            { word: "hurt", meaning: "受伤" },
+            { word: "ate", meaning: "吃" },
+            { word: "took", meaning: "拿" },
+            { word: "took pictures", meaning: "拍照" },
+            { word: "bought", meaning: "买" },
+            { word: "gift", meaning: "礼物" },
+            { word: "fell", meaning: "跌倒" },
+            { word: "off", meaning: "关闭" },
+            { word: "Labour Day", meaning: "劳动节" },
+            { word: "mule", meaning: "骡子" },
+            { word: "Turpan", meaning: "吐鲁番" },
+            { word: "could", meaning: "能够" },
+            { word: "till", meaning: "直到" },
+            { word: "beach", meaning: "海滩" },
+            { word: "basket", meaning: "篮子" },
+            { word: "part", meaning: "部分" },
+            { word: "licked", meaning: "舔" },
+            { word: "laughed", meaning: "笑" },
         ],
         4: [
-            { word: "studies", meaning: "学习(三单形式)" },
-            { word: "puzzle", meaning: "迷 难题" },
-            { word: "hiking", meaning: "徒步 远足" },
-            { word: "hobby", meaning: "爱好" },
-            { word: "idea", meaning: "主意" },
-            { word: "goal", meaning: "目标 进球" },
-            { word: "join", meaning: "加入" },
-            { word: "club", meaning: "俱乐部" },
-            { word: "share", meaning: "分享" }
-        ],
-        5: [
-            { word: "factory", meaning: "工厂" },
-            { word: "worker", meaning: "工人" },
-            { word: "postman", meaning: "邮递员" },
-            { word: "businessman", meaning: "商人" },
-            { word: "police officer", meaning: "警官" },
-            { word: "fisherman", meaning: "渔民" },
-            { word: "scientist", meaning: "科学家" },
-            { word: "pilot", meaning: "飞行员" },
-            { word: "coach", meaning: "教练 长途汽车" },
-            { word: "country", meaning: "国家" },
-            { word: "head teacher", meaning: "校长" },
-            { word: "sea", meaning: "大海" },
-            { word: "stay", meaning: "停留" },
-            { word: "university", meaning: "大学" },
+            { word: "dining hall", meaning: "食堂" },
+            { word: "grass", meaning: "草" },
             { word: "gym", meaning: "体育馆" },
-            { word: "if", meaning: "如果" },
-            { word: "reporter", meaning: "报导员 记者" },
-            { word: "use", meaning: "使用" },
-            { word: "type", meaning: "类型" },
-            { word: "quickly", meaning: "快速地" }
-        ],
-        6: [
-            { word: "angry", meaning: "生气的" },
-            { word: "afraid", meaning: "害怕的" },
-            { word: "sad", meaning: "伤心的" },
-            { word: "worried", meaning: "担心的" },
-            { word: "happy", meaning: "幸福的" },
-            { word: "see a doctor", meaning: "看医生" },
-            { word: "wear", meaning: "穿戴" },
-            { word: "more", meaning: "更多" },
-            { word: "deep breath", meaning: "深呼吸" },
-            { word: "take a deep breath", meaning: "做一次深呼吸" },
-            { word: "count", meaning: "数数" },
-            { word: "chase", meaning: "追逐" },
-            { word: "mice", meaning: "老鼠(复数)" },
-            { word: "bad", meaning: "坏的 糟糕的" },
-            { word: "hurt", meaning: "受伤" },
-            { word: "ill", meaning: "生病的" },
-            { word: "wrong", meaning: "错误的" },
-            { word: "should", meaning: "应该" },
-            { word: "feel", meaning: "感觉(动)" },
-            { word: "well", meaning: "好的(副)" },
-            { word: "sit", meaning: "坐" },
-            { word: "grass", meaning: "草地" },
-            { word: "hear", meaning: "听见" },
-            { word: "ant", meaning: "蚂蚁" },
-            { word: "worry", meaning: "担心" },
-            { word: "stuck", meaning: "卡住" },
-            { word: "mud", meaning: "泥土" },
-            { word: "pull", meaning: "拉" },
-            { word: "everyone", meaning: "每个人" }
+            { word: "ago", meaning: "以前" },
+            { word: "cycling", meaning: "骑自行车" },
+            { word: "go cycling", meaning: "去骑自行车" },
+            { word: "ice-skate", meaning: "溜冰" },
+            { word: "badminton", meaning: "羽毛球" },
+            { word: "star", meaning: "星星" },
+            { word: "easy", meaning: "简单" },
+            { word: "look up", meaning: "查阅" },
+            { word: "Internet", meaning: "互联网" },
+            { word: "different", meaning: "不同" },
+            { word: "active", meaning: "活跃" },
+            { word: "race", meaning: "比赛" },
+            { word: "nothing", meaning: "什么也没有" },
+            { word: "thought", meaning: "想" },
+            { word: "felt", meaning: "感觉到" },
+            { word: "cheetah", meaning: "猎豹" },
+            { word: "trip", meaning: "旅行" },
+            { word: "woke", meaning: "醒来" },
+            { word: "dream", meaning: "梦" }
         ]
     };
     
