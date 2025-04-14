@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阅读类单词快训</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; /* 改为顶部对齐而非居中 */
+            min-height: 100vh;
+            margin: 0;
+            padding-top: 40px; /* 添加顶部间距 */
+            background-color: #E3EDCD; /* 更改为护眼绿色 */
+        }
+        .word-container {
+            font-size: 48px;
+            margin: 30px 0;
+            height: 80px; /* 固定高度 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* 移除跳动动画类 */
+        /* .word-jump {
+            animation: bounce 0.5s ease-out;
+        } */
+        .word-wrong {
+            color: red;
+            font-weight: bold;
+            font-size: 60px;
+            /* 移除错误状态的跳动动画 */
+            /* animation: bounce 0.5s ease-out; */
+        }
+        .word-normal {
+            color: black;
+            font-weight: normal;
+            font-size: 48px;
+            transition: all 0.3s ease;
+        }
+        .options-container {
+            display: flex;
+            gap: 20px;
+        }
+        .option-button {
+            font-size: 24px;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 15px;
+            background-color: #ffd1dc;
+            cursor: pointer;
+            transition: transform 0.2s;
+            -webkit-tap-highlight-color: transparent; /* 防止移动设备上的点击高亮 */
+        }
+        .option-button:hover {
+            transform: scale(1.1);
+            background-color: #ffb6c1;
+        }
+        /* 添加点击后的样式重置 */
+        .option-button:active {
+            transform: scale(1.0);
+            background-color: #ffd1dc;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        .score-container {
+            display: flex;
+            gap: 20px;
+            font-size: 16px; /* 从24px调小至20px */
+            margin-top: 20px;
+        }
+        /* 可以单独为计时器、得分和进度添加自定义样式 */
+        #timer, #score, #wordCount {
+            /* 其他样式可以在这里添加 */
+            /* 字体粗细可选值: normal, bold, lighter 等 */
+            font-weight: normal;
+        }
+        .unit-buttons {
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap; /* 允许按钮换行 */
+            justify-content: center;
+            gap: 15px; /* 增加按钮之间的间距，提供更大的横向和纵向间距 */
+            max-width: 90%;
+            margin-left: auto; /* 添加左侧自动外边距 */
+            margin-right: auto; /* 添加右侧自动外边距 */
+        }
+        .unit-button {
+            font-size: 18px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            background-color: #ddd;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0; /* 移除原有的margin，使用gap来控制间距 */
+        }
+        .unit-button.active {
+            background-color: #97c1a9;
+            color: white;
+        }
+        .grade-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 25px; /* 增加底部间距 */
+            color: #2c6e49;
+            text-align: center;
+            display: flex; /* 改为弹性布局 */
+            justify-content: center; /* 水平居中 */
+            align-items: center; /* 垂直居中 */
+            gap: 15px; /* 添加间距 */
+        }
+        
+        /* 修改学生姓名显示样式，使其与标题一致 */
+        .student-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c6e49;
+        }
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .header-section {
+            margin-bottom: 20px;
+            width: 100%;
+            text-align: center;
+        }
+        .word-section {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        .options-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        /* 添加今日完成记录样式 */
+        .records-section {
+            width: 90%;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        .records-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 15px;
+        }
+        .records-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c6e49;
+        }
+        .records-count {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c6e49;
+        }
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .records-table th, .records-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+            vertical-align: middle; /* 添加垂直居中 */
+        }
+        .records-table th {
+            background-color: #97c1a9;
+            color: white;
+        }
+        .records-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .no-records {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 10px;
+        }
+        /* 添加等级图标样式 */
+        .rank-icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+        /* 添加返回主页按钮样式 */
+        #homeBtn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 2px 4px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        
+        #homeBtn:hover {
+            background-color: #45a049;
+        }
+        
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .top-bar span {
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-section">
+        <div class="grade-title">
+            四下阅读类词汇快训
+            <span class="student-name" id="studentName">未登录</span>
+            <button id="homeBtn" class="btn">返回主页</button>
+        </div>
+        <div class="unit-buttons">
+            <button class="unit-button" data-unit="1">Unit 1</button>
+            <button class="unit-button" data-unit="2">Unit 2</button>
+            <button class="unit-button" data-unit="3">Unit 3</button>
+            <button class="unit-button" data-unit="4">Unit 4</button>
+            <button class="unit-button" data-unit="5">Unit 5</button>
+            <button class="unit-button" data-unit="6">Unit 6</button>
+        </div>
+    </div>
+    
+    <div class="word-section">
+        <div class="word-container" id="word">请选择训练单元</div>
+    </div>
+    
+    <div class="options-section">
+        <div class="options-container">
+            <button class="option-button" id="optionA">选项A</button>
+            <button class="option-button" id="optionB">选项B</button>
+        </div>
+        <div class="score-container">
+            <div id="timer">时间: 00:00</div>
+            <div id="score">得分: 0</div>
+            <div id="wordCount">进度: 0/0</div>
+        </div>
+    </div>
+    
+    <!-- 添加今日完成记录部分 -->
+    <div class="records-section">
+        <div class="records-header">
+            <div class="records-title">今日完成记录</div>
+            <div class="records-count" id="recordsCount">今日已完成0次</div>
+        </div>
+        <table class="records-table">
+            <thead>
+                <tr>
+                    <th>水平等级</th>
+                    <th>完成用时</th>
+                    <th>得分</th>
+                    <th>总词汇数</th>
+                </tr>
+            </thead>
+            <tbody id="recordsBody">
+                <tr class="no-records">
+                    <td colspan="4">暂无记录</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const recordKey = 'wordRev4B_Records';
+        const dateKey = 'wordRev4B_RecordsDate';
+
+        const wordsByUnit = {
+            1: {
+                'first floor': '一楼', 
+                'second floor': '二楼', 
+                'teachers\' office': '教师办公室', 
+                'library': '图书馆', 
+                'playground': '操场', 
+                'computer room': '计算机房', 
+                'art room': '美术教室', 
+                'music room': '音乐教室', 
+                'next to': '紧邻；在……近旁', 
+                'homework': '作业', 
+                'class': '班；班级', 
+                'forty': '四十', 
+                'way': '路'
+            },
+            2: {
+                'breakfast': '早餐；早饭', 
+                'English class': '英语课', 
+                'lunch': '午餐；午饭', 
+                'music class': '音乐课', 
+                'PE class': '体育课', 
+                'dinner': '（中午或晚上吃的）正餐', 
+                'get up': '起床', 
+                'go to school': '去上学', 
+                'go home': '回家', 
+                'go to bed': '上床睡觉', 
+                'over': '结束', 
+                'now': '现在；目前', 
+                'o\'clock': '（表示整点）……点钟', 
+                'kid': '小孩', 
+                'thirty': '三十', 
+                'hurry up': '快点', 
+                'come on': '快；加油', 
+                'just a minute': '稍等一会儿'
+            },
+            3: {
+                'cold': '寒冷的；冷的', 
+                'cool': '凉的；凉爽的', 
+                'warm': '温暖的；暖和的', 
+                'hot': '热的；烫的', 
+                'sunny': '阳光充足的', 
+                'windy': '多风的；风大的', 
+                'cloudy': '阴天的；多云的', 
+                'snowy': '下雪（多）的', 
+                'rainy': '阴雨的；多雨的', 
+                'outside': '在户外', 
+                'be careful': '小心', 
+                'weather': '天气', 
+                'New York': '纽约', 
+                'how about': '怎么样？……情况如何？', 
+                'degree': '度；度数', 
+                'world': '世界', 
+                'London': '伦敦', 
+                'Moscow': '莫斯科', 
+                'Singapore': '新加坡（市）', 
+                'Sydney': '悉尼', 
+                'fly': '放（风筝等）', 
+                'love': '（写信结尾的热情问候语）爱你的'
+            },
+            4: {
+                'tomato': '西红柿', 
+                'potato': '马铃薯；土豆', 
+                'green beans': '豆角；四季豆', 
+                'carrot': '胡萝卜', 
+                'horse': '马', 
+                'cow': '母牛；奶牛', 
+                'sheep': '羊；绵羊', 
+                'hen': '母鸡', 
+                'these': '（this的复数形式）这些', 
+                'yum': '（表示味道或气味非常好）', 
+                'animal': '兽；动物', 
+                'those': '（that的复数形式）那些', 
+                'garden': '花园；菜园', 
+                'farm': '农场', 
+                'goat': '山羊', 
+                'eat': '吃'
+            },
+            5: {
+                'clothes': '衣服；服装', 
+                'pants': '裤子', 
+                'hat': '（常指带檐的）帽子', 
+                'dress': '连衣裙', 
+                'skirt': '女裙', 
+                'coat': '外衣；大衣', 
+                'sweater': '毛衣', 
+                'sock': '短袜', 
+                'shorts': '短裤', 
+                'jacket': '夹克衫', 
+                'shirt': '（尤指男士）衬衫', 
+                'yours': '你的；你们的', 
+                'whose': '谁的', 
+                'mine': '我的', 
+                'pack': '收拾（行李）', 
+                'wait': '等待'
+            },
+            6: {
+                'glove': '（分手指的）手套', 
+                'scarf': '围巾；披巾', 
+                'umbrella': '伞；雨伞', 
+                'sunglasses': '太阳镜', 
+                'pretty': '美观的；精致的', 
+                'expensive': '昂贵的；花钱多的', 
+                'cheap': '花钱少的；便宜的', 
+                'nice': '好的', 
+                'try on': '试穿', 
+                'size': '尺码；号', 
+                'of course': '当然', 
+                'too': '太；过于', 
+                'just': '正好；恰好', 
+                'how much': '多少钱', 
+                'eighty': '八十', 
+                'dollar': '元（美国、加拿大等国的货币单位）', 
+                'sale': '特价销售；大减价', 
+                'more': '更多的', 
+                'us': '我们'
+            }
+        };
+
+        let activeUnits = new Set();
+        let words = {};
+        let completedWords = new Set(); // 新增：跟踪已完成的单词
+        let score = 0;
+        let currentWord = '';
+        let correctAnswer = '';
+        let answeredWrong = false;
+        let timerInterval = null;
+        let startTime = null;
+        let timerStarted = false;
+        
+        // 完成记录相关变量
+        let todayRecords = [];
+        let currentDate = '';
+        
+        // 修改loadTrainingRecords函数，使其只加载当天的记录进行显示
+        function loadTrainingRecords() {
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            if (!loggedInUser) return [];
+            
+            const userData = JSON.parse(loggedInUser);
+            const username = userData.username;
+            
+            // 从localStorage获取用户的所有记录，不再根据日期清除旧记录
+            const storedRecords = localStorage.getItem(`${username}_${recordKey}`) || '[]';
+            const allRecords = JSON.parse(storedRecords);
+            
+            // 获取今天的日期（仅年月日，不含时间）
+            const today = new Date().toLocaleDateString();
+            
+            // 筛选今天的记录用于显示
+            const todayRecords = allRecords.filter(record => {
+                return new Date(record.dateTime).toLocaleDateString() === today;
+            });
+            
+            return todayRecords;
+        }
+        
+        // 修改添加完成记录的函数，将记录永久保存
+        function addCompletionRecord(duration, score, totalWords) {
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            if (!loggedInUser) return;
+            
+            const userData = JSON.parse(loggedInUser);
+            const username = userData.username;
+            
+            // 收集激活的单元信息
+            const activeUnitsArray = Array.from(activeUnits).sort((a, b) => a - b);
+            const unitsString = activeUnitsArray.map(unit => `U${unit}`).join('');
+            
+            const record = {
+                dateTime: new Date().toLocaleString(),
+                duration: duration,
+                score: score,
+                totalWords: totalWords,
+                units: activeUnitsArray, 
+                unitsString: unitsString,
+                timestamp: new Date().getTime()
+            };
+            
+            let allRecords = JSON.parse(localStorage.getItem(`${username}_${recordKey}`) || '[]');
+            allRecords.push(record);
+            
+            const MAX_RECORDS = 100; // 每个用户最多保存100条记录
+            if (allRecords.length > MAX_RECORDS) {
+                allRecords = allRecords.slice(-MAX_RECORDS);
+            }
+            
+            // 新增：过滤出今日记录并自动排序
+            todayRecords = allRecords.filter(r => new Date(r.dateTime).toLocaleDateString() === new Date().toLocaleDateString());
+            sortRecords();
+            
+            // 存储所有记录并更新显示
+            localStorage.setItem(`${username}_${recordKey}`, JSON.stringify(allRecords));
+            updateRecordsDisplay();
+        }
+        
+        // 添加日期变化检测，以便在跨天时更新显示
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化记录
+            todayRecords = loadTrainingRecords();
+            updateRecordsDisplay();
+            
+            // 添加时间变化检测，每分钟检查一次是否跨天
+            setInterval(checkDateChange, 60000); // 每分钟检查一次
+        });
+        
+        // 检查日期变化的函数
+        let lastCheckedDate = new Date().toLocaleDateString();
+        function checkDateChange() {
+            const currentDate = new Date().toLocaleDateString();
+            if (currentDate !== lastCheckedDate) {
+                // 日期已变化，更新界面显示
+                lastCheckedDate = currentDate;
+                todayRecords = loadTrainingRecords(); // 重新加载今天的记录
+                updateRecordsDisplay(); // 更新显示
+            }
+        }
+        
+        // 添加计算等级的函数
+        function calculateRank(score, duration, totalWords) {
+            // 转换duration为秒数
+            const durationSeconds = convertDurationToSeconds(duration);
+            
+            // 1. 得分小于总词汇数，为青铜
+            if (score < totalWords) {
+                return "青铜";
+            }
+            
+            // 2. 得分=总词汇数时，根据用时评定等级
+            // 计算王者时间（总词汇数*1.5秒，向下取整）
+            const kingTime = Math.floor(totalWords * 1.5);
+            
+            // 如果用时小于等于王者时间，为王者或更高
+            if (durationSeconds <= kingTime) {
+                // 计算星级
+                const starDiff = kingTime - durationSeconds;
+                if (starDiff === 0) {
+                    return "王者";
+                } else {
+                    return `王者${starDiff}星`;
+                }
+            }
+            
+            // 计算超出王者时间的秒数
+            const overTime = durationSeconds - kingTime;
+            
+            // 根据超出秒数划分等级
+            if (overTime <= 10) {
+                // 星耀等级：61-70秒
+                return overTime <= 5 ? "星耀2阶" : "星耀1阶";
+            } else if (overTime <= 20) {
+                // 钻石等级：71-80秒
+                return overTime <= 15 ? "钻石2阶" : "钻石1阶";
+            } else if (overTime <= 30) {
+                // 铂金等级：81-90秒
+                return overTime <= 25 ? "铂金2阶" : "铂金1阶";
+            } else if (overTime <= 40) {
+                // 黄金等级：91-100秒
+                return overTime <= 35 ? "黄金2阶" : "黄金1阶";
+            } else {
+                // 超过100秒，白银等级
+                return "白银";
+            }
+        }
+        
+        // 获取等级对应的图标路径
+        function getRankIconPath(rank) {
+            let iconName = '';
+            
+            if (rank.includes('王者')) {
+                iconName = '07wangzhe';
+            } else if (rank.includes('星耀')) {
+                iconName = '06xingyao';
+            } else if (rank.includes('钻石')) {
+                iconName = '05zuanshi';
+            } else if (rank.includes('铂金')) {
+                iconName = '04bojin';
+            } else if (rank.includes('黄金')) {
+                iconName = '03huangjin';
+            } else if (rank === '白银') {
+                iconName = '02baiyin';
+            } else { // 青铜
+                iconName = '01qingtong';
+            }
+            
+            return `./pics/rank/${iconName}.png`;
+        }
+        
+        // 更新记录显示
+        function updateRecordsDisplay() {
+            const tbody = document.getElementById('recordsBody');
+            const countElement = document.getElementById('recordsCount');
+            
+            // 确保加载记录时自动按预期规则排序
+            if (todayRecords.length > 0) {
+                sortRecords();
+            }
+            
+            countElement.textContent = `今日已完成${todayRecords.length}次`;
+            tbody.innerHTML = '';
+            
+            if (todayRecords.length === 0) {
+                const row = document.createElement('tr');
+                row.className = 'no-records';
+                row.innerHTML = '<td colspan="4">暂无记录</td>';
+                tbody.appendChild(row);
+                return;
+            }
+            
+            // 添加每条记录
+            todayRecords.forEach((record, index) => {
+                const rank = calculateRank(record.score, record.duration, record.totalWords);
+                const iconPath = getRankIconPath(rank);
+                const row = document.createElement('tr');
+                // 为排名前三的记录添加特殊样式
+                if (index < 3) {
+                    row.style.fontWeight = 'bold';
+                    // 前三名使用不同的背景色
+                    const colors = ['#e7ff00', '#d0e600', '#a2b300']; // 金、银、铜
+                    row.style.backgroundColor = colors[index];
+                    row.style.color = index === 0 ? '#000' : '#000';
+                }
+                row.innerHTML = `
+                    <td><img src="${iconPath}" class="rank-icon" alt="${rank}" style="width:24px;height:24px;vertical-align:middle;"> <span style="font-style:normal;">${rank}</span></td>
+                    <td>${record.duration}</td>
+                    <td>${record.score}</td>
+                    <td>${record.totalWords} ${record.unitsString ? `(${record.unitsString})` : ''}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // 添加排序函数
+        function sortRecords() {
+            // 首先给所有记录计算等级值
+            todayRecords.forEach(record => {
+                record.rankValue = getRankValue(
+                    calculateRank(record.score, record.duration, record.totalWords)
+                );
+            });
+            
+            todayRecords.sort((a, b) => {
+                // 首先按等级从高到低排序
+                if (a.rankValue !== b.rankValue) {
+                    return a.rankValue - b.rankValue; // 注意：等级值越小代表等级越高
+                }
+                
+                // 如果等级相同，再按得分从高到低排序
+                if (b.score !== a.score) {
+                    return b.score - a.score;
+                }
+                
+                // 如果得分也相同，则按用时从短到长排序
+                const durationA = convertDurationToSeconds(a.duration);
+                const durationB = convertDurationToSeconds(b.duration);
+                return durationA - durationB;
+            });
+        }
+        
+        // 获取等级的数值大小，用于排序（数值越小等级越高）
+        function getRankValue(rank) {
+            if (rank.includes('王者')) {
+                // 王者N星比王者高
+                if (rank === '王者') {
+                    return 10;
+                } else {
+                    // 提取星数，星数越多等级越高，数值越小
+                    const stars = parseInt(rank.replace('王者', '').replace('星', ''));
+                    return 10 - stars;
+                }
+            } else if (rank.includes('星耀')) {
+                return rank.includes('2阶') ? 20 : 21; // 2阶比1阶高
+            } else if (rank.includes('钻石')) {
+                return rank.includes('2阶') ? 30 : 31;
+            } else if (rank.includes('铂金')) {
+                return rank.includes('2阶') ? 40 : 41;
+            } else if (rank.includes('黄金')) {
+                return rank.includes('2阶') ? 50 : 51;
+            } else if (rank === '白银') {
+                return 60;
+            } else { // 青铜
+                return 70;
+            }
+        }
+        
+        // 将时间格式（mm:ss）转换为秒数的辅助函数
+        function convertDurationToSeconds(duration) {
+            const parts = duration.split(':');
+            return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+        }
+        
+        // 格式化持续时间（从秒到mm:ss格式）
+        function formatDuration(seconds) {
+            const minutes = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            return `${minutes}:${secs}`;
+        }
+
+        // 计时器相关函数
+        function startTimer() {
+            if (timerStarted) return; // 如果已经开始计时，不再重新开始
+            
+            timerStarted = true;
+            startTime = new Date();
+            timerInterval = setInterval(updateTimer, 1000);
+            updateTimer(); // 立即更新一次，避免延迟
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function resetTimer() {
+            stopTimer();
+            timerStarted = false;
+            document.getElementById('timer').textContent = '时间: 00:00';
+        }
+
+        function updateTimer() {
+            if (!startTime) return;
+            
+            const now = new Date();
+            const diff = Math.floor((now - startTime) / 1000); // 秒数差
+            
+            const minutes = Math.floor(diff / 60).toString().padStart(2, '0');
+            const seconds = (diff % 60).toString().padStart(2, '0');
+            
+            document.getElementById('timer').textContent = `时间: ${minutes}:${seconds}`;
+        }
+
+        function updateActiveWords() {
+            words = {};
+            completedWords.clear(); // 切换单元时重置已完成单词
+            resetTimer(); // 重置计时器
+            score = 0; // 重置得分
+            document.getElementById('score').textContent = `得分: ${score}`;
+            activeUnits.forEach(unit => {
+                if (wordsByUnit[unit]) {
+                    Object.assign(words, wordsByUnit[unit]);
+                }
+            });
+            const totalWords = Object.keys(words).length;
+            updateProgress(0, totalWords);
+            
+            if (totalWords === 0) {
+                document.getElementById('word').textContent = '请选择训练单元';
+                return false;
+            }
+            return true;
+        }
+
+        function updateProgress(completed, total) {
+            document.getElementById('wordCount').textContent = 
+                `进度: ${completed}/${total}`;
+        }
+
+        function getRandomWord() {
+            const availableWords = Object.keys(words).filter(word => 
+                !completedWords.has(word));
+            
+            if (availableWords.length === 0) {
+                // 首先更新进度显示为完成状态
+                const totalWords = Object.keys(words).length;
+                updateProgress(totalWords, totalWords);
+                
+                // 停止计时器并计算完成用时
+                stopTimer();
+                let completionDuration = "00:00";
+                if (startTime) {
+                    const endTime = new Date();
+                    const durationInSeconds = Math.floor((endTime - startTime) / 1000);
+                    completionDuration = formatDuration(durationInSeconds);
+                }
+                
+                // 计算完成时间但不显示恭喜消息，而是先更新UI
+                // 记录完成情况
+                addCompletionRecord(completionDuration, score, totalWords);
+                
+                // 显示训练结束的提示文本
+                document.getElementById('word').textContent = "点确定开始新一轮";
+                
+                // 重置选项按钮为默认文本
+                document.getElementById('optionA').textContent = "选项A";
+                document.getElementById('optionB').textContent = "选项B";
+                
+                // 计算等级并显示在弹窗中
+                const rank = calculateRank(score, completionDuration, totalWords);
+                
+                // 延迟显示等级消息，替换原来的恭喜消息
+                setTimeout(() => {
+                    alert(`您本次训练达到的等级为：${rank}`);
+                    completedWords.clear(); // 重置已完成单词，允许重新开始
+                    score = 0; // 重置得分
+                    document.getElementById('score').textContent = `得分: ${score}`;
+                    resetTimer(); // 重置计时器
+                    
+                    // 在确认后开始新一轮训练
+                    newQuestion();
+                }, 50);
+                
+                // 返回空字符串，不会显示出来
+                return "";
+            }
+            
+            const randomWord = availableWords[Math.floor(Math.random() * availableWords.length)];
+            // 播放单词发音
+            playAudio(randomWord);
+            return randomWord;
+        }
+
+        function getRandomMeaning(excludeMeaning) {
+            const meaningsList = Object.values(words);
+            let randomMeaning;
+            do {
+                randomMeaning = meaningsList[Math.floor(Math.random() * meaningsList.length)];
+            } while (randomMeaning === excludeMeaning); // 确保不会选到要排除的意思
+            return randomMeaning;
+        }
+
+        function newQuestion() {
+            if (Object.keys(words).length === 0) {
+                return;
+            }
+            
+            currentWord = getRandomWord();
+            if (currentWord === "") { return; }
+            correctAnswer = words[currentWord];
+            answeredWrong = false;
+            
+            const wordElement = document.getElementById('word');
+            // 恢复正常样式，确保单词正常显示
+            wordElement.classList.remove('word-wrong');
+            wordElement.classList.add('word-normal');
+            wordElement.textContent = currentWord;
+
+            const isCorrectFirst = Math.random() < 0.5;
+            const wrongAnswer = getRandomMeaning(correctAnswer);
+            document.getElementById('optionA').textContent = isCorrectFirst ? correctAnswer : wrongAnswer;
+            document.getElementById('optionB').textContent = isCorrectFirst ? wrongAnswer : correctAnswer;
+        }
+
+        function checkAnswer(selectedAnswer) {
+            // 第一次选择答案时开始计时
+            if (!timerStarted) {
+                startTimer();
+            }
+            
+            const wordElement = document.getElementById('word');
+            
+            // 获取按钮元素，用于重置样式
+            const optionButtons = document.querySelectorAll('.option-button');
+            
+            // 如果单词当前处于错误状态（红色显示），不执行任何操作直接返回
+            if (wordElement.classList.contains('word-wrong')) {
+                return;
+            }
+            
+            if (selectedAnswer === correctAnswer) {
+                if (!answeredWrong) {
+                    score += 1;
+                    document.getElementById('score').textContent = `得分: ${score}`;
+                }
+                completedWords.add(currentWord); // 添加到已完成集合
+                updateProgress(completedWords.size, Object.keys(words).length);
+                
+                // 强制重置所有按钮样式
+                optionButtons.forEach(button => {
+                    button.blur(); // 移除焦点
+                    button.style.transform = 'scale(1.0)';
+                    button.style.backgroundColor = '#ffd1dc';
+                    
+                    // 短暂延迟后恢复默认样式控制
+                    setTimeout(() => {
+                        button.style.transform = '';
+                        button.style.backgroundColor = '';
+                    }, 100);
+                });
+                
+                newQuestion();
+            } else {
+                answeredWrong = true; // 标记已答错
+                wordElement.classList.remove('word-normal');
+                wordElement.classList.add('word-wrong');
+                
+                // 重置点击的按钮样式
+                optionButtons.forEach(button => {
+                    button.blur();
+                });
+                
+                setTimeout(() => {
+                    wordElement.classList.remove('word-wrong');
+                    wordElement.classList.add('word-normal');
+                }, 1000);
+            }
+        }
+        
+        // 添加播放音频的函数
+        function playAudio(word) {
+            const audio = new Audio(`https://dict.youdao.com/dictvoice?audio=${word}&type=1`);
+            audio.play().catch(error => console.error('Error playing audio:', error));
+        }
+        
+        // 添加或修复用户登录信息显示函数
+        function displayLoggedInUser() {
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            const studentNameDisplay = document.getElementById('studentName');
+            
+            if (loggedInUser) {
+                const userData = JSON.parse(loggedInUser);
+                studentNameDisplay.textContent = `${userData.username} 正在训练`;
+            } else {
+                studentNameDisplay.textContent = '未登录';
+            }
+        }
+
+        // 添加显示当前登录的学生姓名
+        function displayLoggedInUser() {
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            const studentNameDisplay = document.getElementById('studentName');
+            
+            if (loggedInUser) {
+                const userData = JSON.parse(loggedInUser);
+                studentNameDisplay.textContent = `${userData.username} 正在训练`;
+            } else {
+                studentNameDisplay.textContent = '未登录';
+            }
+        }
+
+        // 添加缺失的 initRecords 函数
+        function initRecords() {
+            // 检查用户登录状态
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            if (!loggedInUser) return;
+            
+            const userData = JSON.parse(loggedInUser);
+            const username = userData.username;
+            
+            // 确保记录键存在
+            if (!localStorage.getItem(`${username}_${recordKey}`)) {
+                localStorage.setItem(`${username}_${recordKey}`, JSON.stringify([]));
+            }
+            
+            // 加载并显示训练记录
+            todayRecords = loadTrainingRecords();
+            updateRecordsDisplay();
+        }
+        
+        // 添加缺失的 displayTrainingRecords 函数
+        function displayTrainingRecords() {
+            // 加载当天的记录并更新显示
+            todayRecords = loadTrainingRecords();
+            updateRecordsDisplay();
+        }
+        
+        // 添加缺失的 resetTrainingSession 函数
+        function resetTrainingSession() {
+            // 重置界面显示
+            document.getElementById('word').textContent = '请选择训练单元';
+            
+            // 重置计数器和定时器
+            completedWords.clear();
+            score = 0;
+            document.getElementById('score').textContent = `得分: ${score}`;
+            
+            // 停止计时器
+            resetTimer();
+            
+            // 重置进度显示
+            const totalWords = Object.keys(words).length || 0;
+            updateProgress(0, totalWords);
+        }
+
+        // 初始化单元按钮事件监听（使用多选，不清除其它按钮选中状态）
+        document.querySelectorAll('.unit-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const unit = parseInt(button.dataset.unit);
+                if (!wordsByUnit[unit]) {
+                    alert('该单元暂时没有单词');
+                    return;
+                }
+                button.classList.toggle('active');
+                if (activeUnits.has(unit)) {
+                    activeUnits.delete(unit);
+                } else {
+                    activeUnits.add(unit);
+                }
+                if (updateActiveWords()) {
+                    newQuestion();
+                }
+            });
+        });
+
+        // 初始化选项按钮事件监听
+        document.getElementById('optionA').onclick = function() {
+            checkAnswer(this.textContent);
+        };
+
+        document.getElementById('optionB').onclick = function() {
+            checkAnswer(this.textContent);
+        };
+
+        // 添加触摸事件处理
+        document.addEventListener('DOMContentLoaded', function() {
+            const optionButtons = document.querySelectorAll('.option-button');
+            
+            optionButtons.forEach(button => {
+                // 处理触摸结束事件
+                button.addEventListener('touchend', function() {
+                    this.blur(); // 移除焦点
+                });
+            });
+            
+            // 初始化今日记录
+            initRecords();
+            
+            // 显示登录用户信息
+            displayLoggedInUser();
+        });
+
+        // 修复初始化逻辑，确保正确显示"请选择训练单元"
+        document.addEventListener('DOMContentLoaded', function() {
+            // 显示登录用户信息
+            displayLoggedInUser();
+            
+            // 初始化界面
+            const meaningElement = document.getElementById('meaning');
+            if (meaningElement) {
+                meaningElement.textContent = '请选择训练单元';
+            }
+            
+            // 清空问题容器
+            const questionContainer = document.getElementById('questionContainer');
+            if (questionContainer) {
+                questionContainer.innerHTML = '';
+            }
+            
+            // 添加时间变化检测，每分钟检查一次是否跨天
+            setInterval(checkDateChange, 60000); // 每分钟检查一次
+            
+            // 显示训练记录
+            displayTrainingRecords();
+        });
+
+        // 修复主页返回链接
+        document.getElementById('homeBtn').addEventListener('click', function() {
+            window.location.href = './wordrev.html';
+        });
+
+        // 初始化状态
+        document.getElementById('word').classList.add('word-normal');
+
+        // 显示初始提示信息
+        document.getElementById('word').textContent = '请选择训练单元';
+    </script>
+</body>
+</html>
