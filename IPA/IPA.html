@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英语音标训练</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            background-color: #E3EDCD; /* 护眼绿色背景 */
+        }
+        .menu-container {
+            display: flex;
+            flex-wrap: wrap; /* 允许换行 */
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 10px; /* 添加间距 */
+        }
+        .menu-item {
+            padding: 10px 20px;
+            margin: 0;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .menu-item:hover {
+            background-color: #e0e0e0;
+        }
+        .menu-item.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .phonetic-display {
+            font-size: 80px;
+            margin: 50px 0;
+            min-height: 100px;
+        }
+        .play-button {
+            padding: 10px 20px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .play-button:hover {
+            background-color: #0b7dda;
+            transform: scale(1.05);
+        }
+        .play-button:active {
+            transform: scale(0.98);
+        }
+        .header-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c6e49;
+        }
+        .prompt-text {
+            font-size: 20px;
+            color: #777;
+            margin-top: 30px;
+        }
+        .score-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 16px;
+            margin-top: 20px;
+            gap: 8px;
+        }
+        #progress {
+            font-weight: normal;
+        }
+        #audioStatus {
+            color: #ff5252;
+            font-size: 14px;
+            height: 20px; /* 固定高度避免界面跳动 */
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="header-title">英语音标训练</h1>
+    
+    <div class="menu-container">
+        <div class="menu-item" data-type="longVowels">长元音</div>
+        <div class="menu-item" data-type="shortVowels">短元音</div>
+        <div class="menu-item" data-type="diphthongs">双元音</div>
+        <div class="menu-item" data-type="simpleConsonants">简单辅音</div>
+        <div class="menu-item" data-type="specialConsonants">特别辅音</div>
+    </div>
+    
+    <div class="phonetic-display" id="phoneticSymbol">请选择训练内容</div>
+    
+    <button class="play-button" id="playButton" disabled>播放发音</button>
+    <button class="play-button" id="nextButton" style="margin-left: 10px;" disabled>下一个</button>
+    
+    <div class="score-container">
+        <div id="progress">进度: 0/0</div>
+        <div id="audioStatus"></div>
+    </div>
+    
+    <script>
+        // 音标数据
+        const phoneticData = {
+            longVowels: [
+                { symbol: "iː", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/08/I-long.mp3" },
+                { symbol: "uː", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/08/u-long.mp3" },
+                { symbol: "ɜː", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2021/01/ə-long.mp3" },
+                { symbol: "ɔː", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2021/01/ɔ-long.mp3" },
+                { symbol: "ɑː", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/08/a-long.mp3" }
+            ],
+            shortVowels: [
+                { symbol: "ɪ", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/08/I.mp3" },
+                { symbol: "e", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/08/e.mp3" },
+                { symbol: "æ", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2021/01/æ.mp3" },
+                { symbol: "ʌ", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2021/01/ʌ.mp3" },
+                { symbol: "ʊ", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2021/01/ʊ.mp3" },
+                { symbol: "ɒ", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2021/01/ɒ.mp3" },
+                { symbol: "ə", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2021/01/ə.mp3" }
+            ],
+            diphthongs: [
+                { symbol: "eɪ", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2021/01/eɪ.mp3" },
+                { symbol: "aɪ", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/08/ai.mp3" },
+                { symbol: "ɔɪ", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2021/01/ɔɪ.mp3" },
+                { symbol: "əʊ", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2021/01/əU.mp3" },
+                { symbol: "aʊ", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2021/01/aʊ.mp3" },
+                { symbol: "ɪə", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2021/01/ɪə.mp3" },
+                { symbol: "eə", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2021/01/eə.mp3" },
+                { symbol: "ʊə", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2021/01/ʊə.mp3" }
+            ],
+            simpleConsonants: [
+                { symbol: "b", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/08/b_sound.mp3" },
+                { symbol: "p", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/08/p_sound.mp3" },
+                { symbol: "m", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/10/m.mp3" },
+                { symbol: "f", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/09/f_sound.mp3" },
+                { symbol: "d", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/09/d_sound.mp3" },
+                { symbol: "t", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/09/t_sound.mp3" },
+                { symbol: "n", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/10/n.mp3" },
+                { symbol: "g", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/09/g_sound.mp3" },
+                { symbol: "k", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/09/k_sound.mp3" },
+                { symbol: "h", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/10/h.mp3" },
+                { symbol: "s", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/09/s_sound.mp3" },
+                { symbol: "z", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/09/z_sound.mp3" },
+                { symbol: "v", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/09/v_sound.mp3" },
+                { symbol: "w", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/10/w-wet-vet.mp3" }
+            ],
+            specialConsonants: [
+                { symbol: "θ", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2021/01/θ-unvoiced_th.mp3" },
+                { symbol: "ð", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2021/01/ð-voiced_th.mp3" },
+                { symbol: "l", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/10/l.mp3" },
+                { symbol: "r", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/10/r.mp3" },
+                { symbol: "dr", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/09/dr.mp3" },
+                { symbol: "tr", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/09/tr.mp3" },
+                { symbol: "ts", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/09/ts.mp3" },
+                { symbol: "dz", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/09/dz.mp3" },
+                { symbol: "tʃ", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/09/ʧ-ch_sound.mp3" },
+                { symbol: "dʒ", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/09/ʤ-j_sound.mp3" },
+                { symbol: "ʃ", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2021/10/ʃ-sh_sound.mp3" },
+                { symbol: "ʒ", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2021/12/%CA%92-zh_sound.mp3" },
+                { symbol: "ŋ", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/10/ŋ.mp3" },
+                { symbol: "j", audioUrl: "https://yingyuyinbiao.cn/wp-content/uploads/2020/10/j-yet-use.mp3" }
+            ]
+        };
+        
+        // 当前选中的分类集合
+        let activeTypes = new Set();
+        // 当前训练中的音标集合
+        let activePhonetics = [];
+        // 已完成的音标集合
+        let completedPhonetics = new Set();
+        
+        // 当前选中的音标
+        let currentPhonetic = null;
+        
+        // 获取DOM元素
+        const phoneticSymbolElement = document.getElementById("phoneticSymbol");
+        const playButton = document.getElementById("playButton");
+        const nextButton = document.getElementById("nextButton");
+        const menuItems = document.querySelectorAll(".menu-item");
+        const progressElement = document.getElementById("progress");
+        const audioStatusElement = document.getElementById("audioStatus");
+        
+        // 更新活跃的音标集合
+        function updateActivePhonetics() {
+            activePhonetics = [];
+            completedPhonetics.clear(); // 切换分类时重置已完成音标
+            
+            // 将所有选中分类的音标合并到活跃集合中
+            activeTypes.forEach(type => {
+                if (phoneticData[type]) {
+                    activePhonetics = [...activePhonetics, ...phoneticData[type]];
+                }
+            });
+            
+            const totalPhonetics = activePhonetics.length;
+            updateProgress(0, totalPhonetics);
+            // 清除可能存在的音频状态信息
+            audioStatusElement.textContent = "";
+            
+            if (totalPhonetics === 0) {
+                phoneticSymbolElement.textContent = '请选择训练内容';
+                playButton.disabled = true;
+                nextButton.disabled = true;
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // 获取随机音标（未完成的）
+        function getRandomPhonetic() {
+            // 过滤出未完成的音标
+            const availablePhonetics = activePhonetics.filter(phonetic => 
+                !completedPhonetics.has(phonetic.symbol));
+            
+            if (availablePhonetics.length === 0) {
+                // 所有音标都已完成
+                phoneticSymbolElement.textContent = "点击确定开始新一轮";
+                playButton.disabled = true;
+                nextButton.disabled = true;
+                
+                // 显示完成信息
+                setTimeout(() => {
+                    alert(`恭喜！您已完成所有音标训练！`);
+                    // 重置完成状态，准备新一轮
+                    completedPhonetics.clear();
+                    
+                    // 更新进度为0/总数
+                    updateProgress(0, activePhonetics.length);
+                    
+                    // 开始新一轮
+                    displayRandomPhonetic();
+                }, 100);
+                
+                return null;
+            }
+            
+            // 随机选择一个未完成的音标
+            const randomIndex = Math.floor(Math.random() * availablePhonetics.length);
+            return availablePhonetics[randomIndex];
+        }
+        
+        // 显示随机音标
+        function displayRandomPhonetic() {
+            if (activePhonetics.length === 0) {
+                return;
+            }
+            
+            currentPhonetic = getRandomPhonetic();
+            
+            if (currentPhonetic) {
+                phoneticSymbolElement.textContent = currentPhonetic.symbol;
+                playButton.disabled = false;
+                nextButton.disabled = false;
+            }
+        }
+        
+        // 播放音标发音
+        function playPhoneticSound() {
+            if (currentPhonetic && currentPhonetic.audioUrl) {
+                playButton.textContent = "播放中...";
+                audioStatusElement.textContent = ""; // 清除之前的错误信息
+                
+                // 创建一个新的音频实例
+                const audio = new Audio(currentPhonetic.audioUrl);
+                
+                // 添加播放成功事件处理
+                audio.onplay = function() {
+                    console.log('音频开始播放');
+                };
+                
+                // 添加播放结束事件
+                audio.onended = function() {
+                    console.log('音频播放完成');
+                    playButton.textContent = "播放发音";
+                };
+                
+                // 添加错误处理
+                audio.onerror = function(e) {
+                    console.error('音频播放错误:', e);
+                    playButton.textContent = "播放发音";
+                    audioStatusElement.textContent = "当前无发音源文件";
+                };
+                
+                // 播放音频
+                audio.play().catch(error => {
+                    console.error('播放音频失败:', error);
+                    playButton.textContent = "播放发音";
+                    audioStatusElement.textContent = "当前无发音源文件";
+                });
+            }
+        }
+        
+        // 标记当前音标为已完成并显示下一个
+        function markCompleteAndNext() {
+            if (currentPhonetic) {
+                completedPhonetics.add(currentPhonetic.symbol);
+                updateProgress(completedPhonetics.size, activePhonetics.length);
+                // 清除可能存在的音频状态信息
+                audioStatusElement.textContent = ""; 
+                displayRandomPhonetic();
+            }
+        }
+        
+        // 更新进度显示
+        function updateProgress(completed, total) {
+            progressElement.textContent = `进度: ${completed}/${total}`;
+        }
+        
+        // 切换分类
+        function toggleCategory(type) {
+            if (activeTypes.has(type)) {
+                activeTypes.delete(type);
+            } else {
+                activeTypes.add(type);
+            }
+            
+            // 更新菜单样式
+            menuItems.forEach(item => {
+                if (activeTypes.has(item.dataset.type)) {
+                    item.classList.add("active");
+                } else {
+                    item.classList.remove("active");
+                }
+            });
+            
+            // 更新音标集合并显示
+            if (updateActivePhonetics()) {
+                displayRandomPhonetic();
+            }
+        }
+        
+        // 绑定事件
+        menuItems.forEach(item => {
+            item.addEventListener("click", () => {
+                toggleCategory(item.dataset.type);
+            });
+        });
+        
+        playButton.addEventListener("click", playPhoneticSound);
+        nextButton.addEventListener("click", markCompleteAndNext);
+    </script>
+</body>
+</html>

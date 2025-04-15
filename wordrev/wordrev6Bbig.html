@@ -249,17 +249,36 @@
                 font-size: 45px;
             }
         }
+
+        /* 新增返回主页按钮样式，参考wordrev6B.html */
+        #homeBtn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        #homeBtn:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
     <!-- 共享区域：标题和单元按钮 -->
     <div class="shared-area">
-        <div class="grade-title">六下阅读类词汇训练 - 双人PK版</div>
+        <div class="grade-title">
+            六下阅读类词汇训练 - 双人PK版
+            <button id="homeBtn" class="btn">返回主页</button>
+        </div>
         <div class="unit-buttons">
             <button class="unit-button" data-unit="1">Unit 1</button>
             <button class="unit-button" data-unit="2">Unit 2</button>
             <button class="unit-button" data-unit="3">Unit 3</button>
             <button class="unit-button" data-unit="4">Unit 4</button>
+            <button class="unit-button" data-unit="5">Extra</button>
         </div>
     </div>
     
@@ -356,7 +375,9 @@
     </div>
 
     <script>
-        const wordsByUnit = {
+        // 存储键名定义
+        const STORAGE_KEY = 'wordrev_6Bbig';
+        const originalWordsByUnit = {
             1: {
                 'younger': '更年轻的',
                 'older': '更老的',
@@ -455,10 +476,73 @@
                 'trip': '旅行',
                 'woke': '醒来',
                 'dream': '梦'
+            },
+            5: {
+                'demo': '示范',
+                'demonstration': '演示'
             }
         };
 
-        // 确保正确设置记录键名，以指向三年级下大全的记录
+        // 修改同步数据函数：完全替换原有数据而非仅合并
+        function syncDataWithLocalStorage() {
+            // 1. 先尝试从localStorage获取数据（如果有的话）
+            const storedData = localStorage.getItem(STORAGE_KEY);
+            let wordsByUnit;
+            
+            if (storedData) {
+                // 如果有存储的数据，尝试加载它
+                console.log("从LocalStorage加载单词数据");
+                try {
+                    const parsedData = JSON.parse(storedData);
+                    
+                    // 关键修改：直接使用从localStorage获取的数据，而不是合并
+                    // 这样可以确保已修改或删除的词条能够被正确地更新
+                    wordsByUnit = parsedData;
+                    
+                    // 检查是否每个单元都至少有一些数据，如果没有则使用原始数据
+                    let hasAllUnits = true;
+                    for (const unitNum in originalWordsByUnit) {
+                        if (!wordsByUnit[unitNum] || Object.keys(wordsByUnit[unitNum]).length === 0) {
+                            hasAllUnits = false;
+                            break;
+                        }
+                    }
+                    
+                    if (!hasAllUnits) {
+                        // 如果缺少某些单元的数据，则使用原始数据作为基础
+                        console.log("检测到缺少部分单元数据，使用原始数据作为基础");
+                        wordsByUnit = JSON.parse(JSON.stringify(originalWordsByUnit));
+                        
+                        // 然后将localStorage中的数据覆盖到相应单元
+                        for (const unit in parsedData) {
+                            if (parsedData[unit] && Object.keys(parsedData[unit]).length > 0) {
+                                wordsByUnit[unit] = parsedData[unit]; 
+                            }
+                        }
+                    }
+                    
+                    console.log("数据已成功加载，完全替换原始数据");
+                } catch (error) {
+                    console.error("解析存储的数据时出错:", error);
+                    wordsByUnit = JSON.parse(JSON.stringify(originalWordsByUnit)); // 发生错误时使用原始数据
+                }
+            } else {
+                // 如果没有存储的数据，使用原始数据
+                console.log("未找到存储的数据，使用原始数据");
+                wordsByUnit = JSON.parse(JSON.stringify(originalWordsByUnit));
+            }
+            
+            // 2. 将数据保存回localStorage (包括初始数据)
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(wordsByUnit));
+            console.log("单词数据已保存到LocalStorage");
+            
+            return wordsByUnit;
+        }
+        
+        // 在页面加载时执行数据同步
+        const wordsByUnit = syncDataWithLocalStorage();
+
+        // 确保正确设置记录键名，以指向六年级下大全的记录
         const recordKey = 'wordrev6Bbig_records'; // 修改为正确的记录键名
 
         // 创建玩家状态对象，封装每个玩家的数据和状态
@@ -533,48 +617,22 @@
         
         // 添加计算等级的函数
         function calculateRank(score, duration, totalWords) {
-            // 转换duration为秒数
             const durationSeconds = convertDurationToSeconds(duration);
+            const kingTime = Math.floor(totalWords * 1.4);
             
-            // 1. 得分小于总词汇数，为青铜
-            if (score < totalWords) {
-                return "青铜";
-            }
-            
-            // 2. 得分=总词汇数时，根据用时评定等级
-            // 计算王者时间（总词汇数*1.5秒，向下取整）
-            const kingTime = Math.floor(totalWords * 1.5);
-            
-            // 如果用时小于等于王者时间，为王者或更高
             if (durationSeconds <= kingTime) {
-                // 计算星级
                 const starDiff = kingTime - durationSeconds;
-                if (starDiff === 0) {
-                    return "王者";
-                } else {
-                    return `王者${starDiff}星`;
-                }
-            }
-            
-            // 计算超出王者时间的秒数
-            const overTime = durationSeconds - kingTime;
-            
-            // 根据超出秒数划分等级
-            if (overTime <= 10) {
-                // 星耀等级：61-70秒
-                return overTime <= 5 ? "星耀2阶" : "星耀1阶";
-            } else if (overTime <= 20) {
-                // 钻石等级：71-80秒
-                return overTime <= 15 ? "钻石2阶" : "钻石1阶";
-            } else if (overTime <= 30) {
-                // 铂金等级：81-90秒
-                return overTime <= 25 ? "铂金2阶" : "铂金1阶";
-            } else if (overTime <= 40) {
-                // 黄金等级：91-100秒
-                return overTime <= 35 ? "黄金2阶" : "黄金1阶";
+                return starDiff === 0 ? "王者" : `王者${starDiff}星`;
             } else {
-                // 超过100秒，白银等级
-                return "白银";
+                const overTime = durationSeconds - kingTime;
+                const drop = Math.floor(overTime / 10);
+                const remainder = overTime % 10;
+                const levelOrder = ["星耀", "钻石", "铂金", "黄金", "白银", "青铜"];
+                if (drop >= levelOrder.length) {
+                    return "青铜";
+                } else {
+                    return remainder <= 5 ? `${levelOrder[drop]}2阶` : `${levelOrder[drop]}1阶`;
+                }
             }
         }
         
@@ -592,12 +650,11 @@
                 iconName = '04bojin';
             } else if (rank.includes('黄金')) {
                 iconName = '03huangjin';
-            } else if (rank === '白银') {
+            } else if (rank.includes('白银')) {  // 修改处：原来为rank === '白银'
                 iconName = '02baiyin';
             } else { // 青铜
                 iconName = '01qingtong';
             }
-            
             return `./pics/rank/${iconName}.png`;
         }
         
@@ -693,8 +750,8 @@
                 return rank.includes('2阶') ? 40 : 41;
             } else if (rank.includes('黄金')) {
                 return rank.includes('2阶') ? 50 : 51;
-            } else if (rank === '白银') {
-                return 60;
+            } else if (rank.includes('白银')) {
+                return rank.includes('2阶') ? 60 : 61;
             } else { // 青铜
                 return 70;
             }
@@ -937,7 +994,7 @@
                 setTimeout(() => {
                     wordElement.classList.remove('word-wrong');
                     wordElement.classList.add('word-normal');
-                }, 1000);
+                }, 3000);
             }
         }
         
@@ -1152,8 +1209,14 @@
             initRecords(playerLeft);
             initRecords(playerRight);
         });
+
+        // 新增返回主页按钮事件处理，导航至 wordrev_PK.html
+        document.getElementById('homeBtn').addEventListener('click', function(){
+            window.location.href = './wordrev_PK.html';
+        });
     </script>
 </body>
 </html>
+
 
 

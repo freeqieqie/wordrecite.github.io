@@ -1,1010 +1,1011 @@
 <html><head><base href="./">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>童行新三年级下单词默写训练</title>
-<style>
-body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    background-color: #C7EDCC;
-}
-.container {
-    text-align: center;
-    background-color: #E8F6E9;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    margin-top: 2rem;
-    width: 90%; /* 容器宽度占视窗90% */
-    max-width: 600px; /* 最大宽度600px */
-    margin-left: auto;
-    margin-right: auto;
-}
-h1 {
-    color: #333;
-    margin-bottom: 1rem;
-    font-size: 15px;
-    font-weight: bold;
-}
-.unit-tabs {
-    display: flex;
-    justify-content: center; /* 改为居中对齐 */
-    flex-wrap: wrap; /* 允许换行 */
-    margin-bottom: 2rem;
-    gap: 0.5rem; /* 添加间隙，确保按钮之间有统一的间距 */
-    padding: 0 1rem; /* 添加左右内边距，避免按钮贴近屏幕边缘 */
-}
-.unit-tab {
-    font-size: 1rem;
-    margin: 0.5rem; /* 保持原有的间距 */
-    padding: 0.5rem 1rem;
-    background-color: #fafafa;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    width: auto; /* 设置宽度为自动，适配文字长度 */
-}
-.unit-tab:hover, .unit-tab.active {
-    background-color: #4CAF50;
-    color: white;
-}
-.meaning {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    color: #4a4a4a;
-}
-.spelling-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 1rem 0;
-    min-height: 120px;
-    width: 100%;
-}
-.answer {
-    display: flex;
-    justify-content: center;
-    align-items: center; /* Center letters vertically */
-    min-height: 50px;
-    width: 90%;
-    max-width: 500px;
-    margin-bottom: 1rem;
-    background-color: #E8F6E9;
-    border-radius: 5px;
-    padding: 5px;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-.answer-line {
-    width: 90%;
-    max-width: 500px;
-    height: 2px;
-    background-color: #333;
-    margin-bottom: 1rem;
-}
-.letters {
-    display: flex; /* 改为flex布局 */
-    flex-wrap: wrap; /* 允许换行 */
-    justify-content: center; /* 水平居中 */
-    align-items: center; /* 垂直居中 */
-    gap: 0.5rem;
-    width: 90%;
-    max-width: 500px;
-    padding: 10px;
-    min-height: 100px;
-    background-color: #E8F6E9;
-    border-radius: 5px;
-    margin: 0 auto; /* 容器自身居中 */
-    position: relative; /* 添加相对定位 */
-}
-.letter {
-    font-size: 1.5rem;
-    margin: 0.25rem;
-    width: 40px; /* Fixed width */
-    height: 40px; /* Fixed height to match width */
-    padding: 0; /* Remove padding */
-    background-color: #e0e0e0;
-    border: none;
-    border-radius: 5px;
-    cursor: grab; /* 修改光标样式，表示可拖拽 */
-    transition: background-color 0.3s;
-    display: flex; /* Use flexbox for centering */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    margin: 0;
-    position: relative; /* 为拖拽添加定位 */
-    z-index: 1; /* 确保字母在拖拽时位于上层 */
-}
-.letter:hover {
-    background-color: #d0d0d0;
-}
-.letter-space {
-    width: 40px;
-    height: 40px;
-    visibility: hidden;
-    display: inline-block; /* 确保空白占位符显示为块级元素 */
-    flex: 0 0 40px; /* 确保占位符不会改变大小 */
-}
-.letter.dragging {
-    opacity: 0.5;
-    cursor: grabbing;
-    z-index: 10;
-}
-.insert-indicator {
-    position: absolute;
-    width: 2px;
-    height: 40px;
-    background-color: #4CAF50;
-    z-index: 5;
-}
-.button-container {
-    margin-top: 1rem;
-}
-.btn {
-    font-size: 1rem;
-    margin: 0.5rem;
-    padding: 0.5rem 1rem;
-    background-color: yellow;
-    color: black;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-.btn:hover {
-    opacity: 0.8;
-}
-.btn-check.correct {
-    background-color: green;
-    color: white;
-}
-.btn-check.incorrect {
-    background-color: red;
-    color: white;
-}
-.btn-next.correct {
-    background-color: yellow;
-    color: black;
-}
-.btn-next.incorrect {
-    background-color: blue;
-    color: white;
-}
-.progress {
-    margin-top: 1rem;
-    font-size: 1.2rem;
-    color: #4a4a4a;
-}
-.footer {
-    margin-top: 2rem;
-    font-size: 0.8rem;
-    color: #777;
-    text-align: center;
-}
-
-/* 训练记录样式 */
-.records-container {
-    width: 90%;
-    max-width: 600px;
-    margin: 2rem auto;
-    background-color: #E8F6E9;
-    border-radius: 10px;
-    padding: 1rem;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-.records-container h3 {
-    text-align: center;
-    color: #333;
-    margin-top: 0;
-    margin-bottom: 1rem;
-}
-
-.records-table {
-    width: 100%;
-    border-collapse: collapse;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.records-table th,
-.records-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-}
-
-.records-table th {
-    background-color: #4CAF50;
-    color: white;
-}
-
-.records-table tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-.records-table tr:hover {
-    background-color: #ddd;
-}
-</style>
-</head>
-<body>
-<h1>童行新三年级下单词默写训练</h1>
-<div class="button-container">
-    <span id="studentName" class="progress">未登录</span>
-    <span id="timer" class="progress">00:00</span> <!-- 计时器 -->
-    <button class="btn" id="homeBtn">返回主页</button>
-</div>
-<div class="unit-tabs">
-    <button class="unit-tab active" data-unit="1">Unit 1</button>
-    <button class="unit-tab" data-unit="2">Unit 2</button>
-    <button class="unit-tab" data-unit="3">Unit 3</button>
-    <button class="unit-tab" data-unit="4">Unit 4</button>
-    <button class="unit-tab" data-unit="5">Unit 5</button>
-    <button class="unit-tab" data-unit="6">Unit 6</button>
-</div>
-<div class="container">
-    <div class="meaning" id="meaning"></div>
-    <div class="spelling-area">
-        <div class="answer" id="answer"></div>
-        <div class="answer-line"></div>
-    </div>
-    <div class="letters" id="letters"></div>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>童行新三年级下单词默写训练</title>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        background-color: #C7EDCC;
+    }
+    .container {
+        text-align: center;
+        background-color: #E8F6E9;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        margin-top: 2rem;
+        width: 90%; /* 容器宽度占视窗90% */
+        max-width: 600px; /* 最大宽度600px */
+        margin-left: auto;
+        margin-right: auto;
+    }
+    h1 {
+        color: #333;
+        margin-bottom: 1rem;
+        font-size: 15px;
+        font-weight: bold;
+    }
+    .unit-tabs {
+        display: flex;
+        justify-content: center; /* 改为居中对齐 */
+        flex-wrap: wrap; /* 允许换行 */
+        margin-bottom: 2rem;
+        gap: 0.5rem; /* 添加间隙，确保按钮之间有统一的间距 */
+        padding: 0 1rem; /* 添加左右内边距，避免按钮贴近屏幕边缘 */
+    }
+    .unit-tab {
+        font-size: 1rem;
+        margin: 0.5rem; /* 保持原有的间距 */
+        padding: 0.5rem 1rem;
+        background-color: #fafafa;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width: auto; /* 设置宽度为自动，适配文字长度 */
+    }
+    .unit-tab:hover, .unit-tab.active {
+        background-color: #4CAF50;
+        color: white;
+    }
+    .meaning {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: #4a4a4a;
+    }
+    .spelling-area {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 1rem 0;
+        min-height: 120px;
+        width: 100%;
+    }
+    .answer {
+        display: flex;
+        justify-content: center;
+        align-items: center; /* Center letters vertically */
+        min-height: 50px;
+        width: 90%;
+        max-width: 500px;
+        margin-bottom: 1rem;
+        background-color: #E8F6E9;
+        border-radius: 5px;
+        padding: 5px;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .answer-line {
+        width: 90%;
+        max-width: 500px;
+        height: 2px;
+        background-color: #333;
+        margin-bottom: 1rem;
+    }
+    .letters {
+        display: flex; /* 改为flex布局 */
+        flex-wrap: wrap; /* 允许换行 */
+        justify-content: center; /* 水平居中 */
+        align-items: center; /* 垂直居中 */
+        gap: 0.5rem;
+        width: 90%;
+        max-width: 500px;
+        padding: 10px;
+        min-height: 100px;
+        background-color: #E8F6E9;
+        border-radius: 5px;
+        margin: 0 auto; /* 容器自身居中 */
+        position: relative; /* 添加相对定位 */
+    }
+    .letter {
+        font-size: 1.5rem;
+        margin: 0.25rem;
+        width: 40px; /* Fixed width */
+        height: 40px; /* Fixed height to match width */
+        padding: 0; /* Remove padding */
+        background-color: #e0e0e0;
+        border: none;
+        border-radius: 5px;
+        cursor: grab; /* 修改光标样式，表示可拖拽 */
+        transition: background-color 0.3s;
+        display: flex; /* Use flexbox for centering */
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+        margin: 0;
+        position: relative; /* 为拖拽添加定位 */
+        z-index: 1; /* 确保字母在拖拽时位于上层 */
+    }
+    .letter:hover {
+        background-color: #d0d0d0;
+    }
+    .letter-space {
+        width: 40px;
+        height: 40px;
+        visibility: hidden;
+        display: inline-block; /* 确保空白占位符显示为块级元素 */
+        flex: 0 0 40px; /* 确保占位符不会改变大小 */
+    }
+    .letter.dragging {
+        opacity: 0.5;
+        cursor: grabbing;
+        z-index: 10;
+    }
+    .insert-indicator {
+        position: absolute;
+        width: 2px;
+        height: 40px;
+        background-color: #4CAF50;
+        z-index: 5;
+    }
+    .button-container {
+        margin-top: 1rem;
+    }
+    .btn {
+        font-size: 1rem;
+        margin: 0.5rem;
+        padding: 0.5rem 1rem;
+        background-color: yellow;
+        color: black;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .btn:hover {
+        opacity: 0.8;
+    }
+    .btn-check.correct {
+        background-color: green;
+        color: white;
+    }
+    .btn-check.incorrect {
+        background-color: red;
+        color: white;
+    }
+    .btn-next.correct {
+        background-color: yellow;
+        color: black;
+    }
+    .btn-next.incorrect {
+        background-color: blue;
+        color: white;
+    }
+    .progress {
+        margin-top: 1rem;
+        font-size: 1.2rem;
+        color: #4a4a4a;
+    }
+    .footer {
+        margin-top: 2rem;
+        font-size: 0.8rem;
+        color: #777;
+        text-align: center;
+    }
+    
+    /* 训练记录样式 */
+    .records-container {
+        width: 90%;
+        max-width: 600px;
+        margin: 2rem auto;
+        background-color: #E8F6E9;
+        border-radius: 10px;
+        padding: 1rem;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    
+    .records-container h3 {
+        text-align: center;
+        color: #333;
+        margin-top: 0;
+        margin-bottom: 1rem;
+    }
+    
+    .records-table {
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+    
+    .records-table th,
+    .records-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+    }
+    
+    .records-table th {
+        background-color: #4CAF50;
+        color: white;
+    }
+    
+    .records-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+    
+    .records-table tr:hover {
+        background-color: #ddd;
+    }
+    </style>
+    </head>
+    <body>
+    <h1>童行新三年级下单词默写训练</h1>
     <div class="button-container">
-        <button class="btn btn-check" id="checkBtn">检查</button>
-        <button class="btn btn-next" id="nextBtn">恭喜完成</button>
+        <span id="studentName" class="progress">未登录</span>
+        <span id="timer" class="progress">00:00</span> <!-- 计时器 -->
+        <button class="btn" id="homeBtn">返回主页</button>
     </div>
-</div>
-<div id="progress" class="progress"></div>
-
-<!-- 添加训练记录区域 -->
-<div class="records-container" id="recordsContainer">
-    <h3>训练记录</h3>
-    <table class="records-table" id="recordsTable">
-        <thead>
-            <tr>
-                <th>日期</th>
-                <th>训练用时</th>
-                <th>一次性全对</th>
-                <th>总词汇数</th>
-            </tr>
-        </thead>
-        <tbody id="recordsTableBody">
-            <!-- 记录将在这里动态生成 -->
-        </tbody>
-    </table>
-</div>
-
-<footer class="footer">
-    <p>本程序由童行宋老师使用AI完成制作</p>
-</footer>
-<script>
-const units = {
-    1: [
-        { word: "where", meaning: "在哪里；到哪里" },
-        { word: "from", meaning: "来自，从……来" },
-        { word: "about", meaning: "大约；左右" },
-        { word: "today", meaning: "今天" },
-        { word: "teacher", meaning: "教师" },
-        { word: "student", meaning: "学生" },
-        { word: "after", meaning: "在……后面" },
-        { word: "who", meaning: "谁；什么人" },
-        { word: "girl", meaning: "女孩" },
-        { word: "neighbour", meaning: "邻居" },
-        { word: "boy", meaning: "男孩" },
-        { word: "woman", meaning: "成年女子；妇女" },
-        { word: "man", meaning: "成年男子；男人" },
-        { word: "Mr", meaning: "先生" },
-        { word: "classmate", meaning: "同班同学" },
-        { word: "he", meaning: "他" },
-        { word: "English", meaning: "英语的；英语" },
-        { word: "she", meaning: "她" },
-        { word: "very", meaning: "很；非常；十分" },
-        { word: "UK", meaning: "英国" },
-        { word: "China", meaning: "中国" },
-        { word: "Canada", meaning: "加拿大" },
-        { word: "USA", meaning: "美国" }
-    ],
-    2: [
-        { word: "has", meaning: "具有（某种外表、特性或特征）" },
-        { word: "long", meaning: "（长度或距离）长的" },
-        { word: "body", meaning: "身体" },
-        { word: "short", meaning: "短的；个子矮的" },
-        { word: "leg", meaning: "腿" },
-        { word: "right", meaning: "（意见或判断）准确，确切，恰当" },
-        { word: "fat", meaning: "肥的；肥胖的" },
-        { word: "thin", meaning: "瘦的" },
-        { word: "slow", meaning: "缓慢的；慢的" },
-        { word: "love", meaning: "喜爱；爱" },
-        { word: "tail", meaning: "尾；尾巴" },
-        { word: "bye", meaning: "再见；再会" },
-        { word: "her", meaning: "她；她的" },
-        { word: "gift", meaning: "礼物" },
-        { word: "picture", meaning: "图画；绘画" },
-        { word: "card", meaning: "贺卡；慰问卡；卡片" },
-        { word: "sing", meaning: "唱（歌）；演唱" },
-        { word: "dance", meaning: "跳舞" },
-        { word: "face", meaning: "脸；面孔" },
-        { word: "all", meaning: "所有；全部" },
-        { word: "so", meaning: "（表示大小或数量）这么，那么" },
-        { word: "talk", meaning: "（用某种语言）讲，说，说话" },
-        { word: "song", meaning: "歌；歌曲" },
-        { word: "or", meaning: "或；或者；还是" },
-        { word: "much", meaning: "许多；大量" }
-    ],
-    3: [
-        { word: "eraser", meaning: "橡皮" },
-        { word: "find", meaning: "找到；找回" },
-        { word: "ruler", meaning: "直尺" },
-        { word: "pen", meaning: "钢笔" },
-        { word: "pencil", meaning: "铅笔" },
-        { word: "book", meaning: "书；书籍" },
-        { word: "bag", meaning: "包；袋" },
-        { word: "paper", meaning: "纸" },
-        { word: "these", meaning: "这些" },
-        { word: "see", meaning: "看见" },
-        { word: "smell", meaning: "闻（气味）" },
-        { word: "taste", meaning: "尝（味道）" },
-        { word: "hear", meaning: "听见；听到" },
-        { word: "touch", meaning: "触摸；碰" },
-        { word: "sense", meaning: "感觉官能（即视、听、嗅、味、触五觉）" },
-        { word: "learn", meaning: "学；学习" },
-        { word: "nose", meaning: "鼻；鼻子" },
-        { word: "tongue", meaning: "舌；舌头" },
-        { word: "class", meaning: "课；班级" },
-        { word: "computer", meaning: "计算机；电脑" }
-    ],
-    4: [
-        { word: "breakfast", meaning: "早餐；早饭" },
-        { word: "time", meaning: "时间" },
-        { word: "bread", meaning: "面包" },
-        { word: "egg", meaning: "（作食物用的）蛋；鸡蛋" },
-        { word: "milk", meaning: "（牛或羊等的）奶" },
-        { word: "noodle", meaning: "（常用复数）面条" },
-        { word: "juice", meaning: "果汁" },
-        { word: "rice", meaning: "大米" },
-        { word: "meat", meaning: "肉" },
-        { word: "vegetable", meaning: "蔬菜" },
-        { word: "healthy", meaning: "健康的" },
-        { word: "plate", meaning: "盘子" },
-        { word: "soup", meaning: "汤" },
-        { word: "fruit", meaning: "水果" },
-        { word: "colourful", meaning: "五彩缤纷的" },
-        { word: "candy", meaning: "糖果" },
-        { word: "yummy", meaning: "很好吃的" }
-    ],
-    5: [
-        { word: "at", meaning: "在（某处）" },
-        { word: "home", meaning: "家；住所" },
-        { word: "boat", meaning: "小船；舟" },
-        { word: "cool", meaning: "（因时髦、漂亮且与众不同而）酷的，绝妙的" },
-        { word: "keep", meaning: "保有；留着" },
-        { word: "ball", meaning: "球" },
-        { word: "doll", meaning: "玩偶；玩具娃娃" },
-        { word: "car", meaning: "小汽车；轿车" },
-        { word: "on", meaning: "（覆盖、附着）在……上" },
-        { word: "shelf", meaning: "架子" },
-        { word: "in", meaning: "在……内；在……中" },
-        { word: "box", meaning: "盒子" },
-        { word: "now", meaning: "现在" },
-        { word: "cap", meaning: "帽子" },
-        { word: "map", meaning: "地图" },
-        { word: "under", meaning: "在（或到、通过）……下面" },
-        { word: "still", meaning: "还是；仍然" },
-        { word: "put", meaning: "放；安置" }
-    ],
-    6: [
-        { word: "fifteen", meaning: "十五" },
-        { word: "twelve", meaning: "十二" },
-        { word: "fourteen", meaning: "十四" },
-        { word: "thirteen", meaning: "十三" },
-        { word: "eleven", meaning: "十一" },
-        { word: "choose", meaning: "选择；挑选" },
-        { word: "twenty", meaning: "二十" },
-        { word: "seventeen", meaning: "十七" },
-        { word: "sixteen", meaning: "十六" },
-        { word: "eighteen", meaning: "十八" },
-        { word: "nineteen", meaning: "十九" },
-        { word: "save", meaning: "储蓄；攒钱" },
-        { word: "spend", meaning: "用，花（钱）" },
-        { word: "piggy bank", meaning: "猪形储钱罐" },
-        { word: "pay", meaning: "付费" },
-        { word: "back", meaning: "回到原处" }
-    ]
-};
-
-let currentUnit = 1;
-let currentWordIndex = 0;
-let currentWord;
-
-const lettersContainer = document.getElementById('letters');
-const answerContainer = document.getElementById('answer');
-const meaningElement = document.getElementById('meaning');
-const checkBtn = document.getElementById('checkBtn');
-const nextBtn = document.getElementById('nextBtn');
-const unitTabs = document.querySelectorAll('.unit-tab');
-
-let correctWords = 0; // 记录一次性全对的单词数
-let currentWordChecked = false; // 跟踪当前单词是否已经检查过
-const recordKey = 'pep3B_records'; // 为不同年级设置不同的记录键名
-
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-}
-
-function displayWord() {
-    currentWord = units[currentUnit][currentWordIndex];
-    meaningElement.textContent = `${currentWord.meaning}`;
-    const shuffledLetters = shuffleArray([...currentWord.word]);
+    <div class="unit-tabs">
+        <button class="unit-tab active" data-unit="1">Unit 1</button>
+        <button class="unit-tab" data-unit="2">Unit 2</button>
+        <button class="unit-tab" data-unit="3">Unit 3</button>
+        <button class="unit-tab" data-unit="4">Unit 4</button>
+        <button class="unit-tab" data-unit="5">Unit 5</button>
+        <button class="unit-tab" data-unit="6">Unit 6</button>
+    </div>
+    <div class="container">
+        <div class="meaning" id="meaning"></div>
+        <div class="spelling-area">
+            <div class="answer" id="answer"></div>
+            <div class="answer-line"></div>
+        </div>
+        <div class="letters" id="letters"></div>
+        <div class="button-container">
+            <button class="btn btn-check" id="checkBtn">检查</button>
+            <button class="btn btn-next" id="nextBtn">恭喜完成</button>
+        </div>
+    </div>
+    <div id="progress" class="progress"></div>
     
-    // 清空容器
-    lettersContainer.innerHTML = '';
-    answerContainer.innerHTML = '';
+    <!-- 添加训练记录区域 -->
+    <div class="records-container" id="recordsContainer">
+        <h3>训练记录</h3>
+        <table class="records-table" id="recordsTable">
+            <thead>
+                <tr>
+                    <th>日期</th>
+                    <th>训练用时</th>
+                    <th>一次性全对</th>
+                    <th>总词汇数</th>
+                </tr>
+            </thead>
+            <tbody id="recordsTableBody">
+                <!-- 记录将在这里动态生成 -->
+            </tbody>
+        </table>
+    </div>
     
-    // 计算每行可以放置的字母数量（根据容器宽度和字母宽度）
-    const letterWidth = 40; // 字母宽度
-    const letterMargin = 8; // 字母间距
-    const containerWidth = lettersContainer.clientWidth;
-    const lettersPerRow = Math.floor(containerWidth / (letterWidth + letterMargin));
+    <footer class="footer">
+        <p>本程序由童行宋老师使用AI完成制作</p>
+    </footer>
+    <script>
+    const units = {
+        1: [
+            { word: "where", meaning: "在哪里；到哪里" },
+            { word: "from", meaning: "来自，从……来" },
+            { word: "about", meaning: "大约；左右" },
+            { word: "today", meaning: "今天" },
+            { word: "teacher", meaning: "教师" },
+            { word: "student", meaning: "学生" },
+            { word: "after", meaning: "在……后面" },
+            { word: "who", meaning: "谁；什么人" },
+            { word: "girl", meaning: "女孩" },
+            { word: "neighbour", meaning: "邻居" },
+            { word: "boy", meaning: "男孩" },
+            { word: "woman", meaning: "成年女子；妇女" },
+            { word: "man", meaning: "成年男子；男人" },
+            { word: "Mr", meaning: "先生" },
+            { word: "classmate", meaning: "同班同学" },
+            { word: "he", meaning: "他" },
+            { word: "English", meaning: "英语的；英语" },
+            { word: "she", meaning: "她" },
+            { word: "very", meaning: "很；非常；十分" },
+            { word: "UK", meaning: "英国" },
+            { word: "China", meaning: "中国" },
+            { word: "Canada", meaning: "加拿大" },
+            { word: "USA", meaning: "美国" }
+        ],
+        2: [
+            { word: "has", meaning: "具有（某种外表、特性或特征）" },
+            { word: "long", meaning: "（长度或距离）长的" },
+            { word: "body", meaning: "身体" },
+            { word: "short", meaning: "短的；个子矮的" },
+            { word: "leg", meaning: "腿" },
+            { word: "right", meaning: "（意见或判断）准确，确切，恰当" },
+            { word: "fat", meaning: "肥的；肥胖的" },
+            { word: "thin", meaning: "瘦的" },
+            { word: "slow", meaning: "缓慢的；慢的" },
+            { word: "love", meaning: "喜爱；爱" },
+            { word: "tail", meaning: "尾；尾巴" },
+            { word: "bye", meaning: "再见；再会" },
+            { word: "her", meaning: "她；她的" },
+            { word: "gift", meaning: "礼物" },
+            { word: "picture", meaning: "图画；绘画" },
+            { word: "card", meaning: "贺卡；慰问卡；卡片" },
+            { word: "sing", meaning: "唱（歌）；演唱" },
+            { word: "dance", meaning: "跳舞" },
+            { word: "face", meaning: "脸；面孔" },
+            { word: "all", meaning: "所有；全部" },
+            { word: "so", meaning: "（表示大小或数量）这么，那么" },
+            { word: "talk", meaning: "（用某种语言）讲，说，说话" },
+            { word: "song", meaning: "歌；歌曲" },
+            { word: "or", meaning: "或；或者；还是" },
+            { word: "much", meaning: "许多；大量" }
+        ],
+        3: [
+            { word: "eraser", meaning: "橡皮" },
+            { word: "find", meaning: "找到；找回" },
+            { word: "ruler", meaning: "直尺" },
+            { word: "pen", meaning: "钢笔" },
+            { word: "pencil", meaning: "铅笔" },
+            { word: "book", meaning: "书；书籍" },
+            { word: "bag", meaning: "包；袋" },
+            { word: "paper", meaning: "纸" },
+            { word: "these", meaning: "这些" },
+            { word: "see", meaning: "看见" },
+            { word: "smell", meaning: "闻（气味）" },
+            { word: "taste", meaning: "尝（味道）" },
+            { word: "hear", meaning: "听见；听到" },
+            { word: "touch", meaning: "触摸；碰" },
+            { word: "sense", meaning: "感觉官能（即视、听、嗅、味、触五觉）" },
+            { word: "learn", meaning: "学；学习" },
+            { word: "nose", meaning: "鼻；鼻子" },
+            { word: "tongue", meaning: "舌；舌头" },
+            { word: "class", meaning: "课；班级" },
+            { word: "computer", meaning: "计算机；电脑" }
+        ],
+        4: [
+            { word: "breakfast", meaning: "早餐；早饭" },
+            { word: "time", meaning: "时间" },
+            { word: "bread", meaning: "面包" },
+            { word: "egg", meaning: "（作食物用的）蛋；鸡蛋" },
+            { word: "milk", meaning: "（牛或羊等的）奶" },
+            { word: "noodle", meaning: "（常用复数）面条" },
+            { word: "juice", meaning: "果汁" },
+            { word: "rice", meaning: "大米" },
+            { word: "meat", meaning: "肉" },
+            { word: "vegetable", meaning: "蔬菜" },
+            { word: "healthy", meaning: "健康的" },
+            { word: "plate", meaning: "盘子" },
+            { word: "soup", meaning: "汤" },
+            { word: "fruit", meaning: "水果" },
+            { word: "colourful", meaning: "五彩缤纷的" },
+            { word: "candy", meaning: "糖果" },
+            { word: "yummy", meaning: "很好吃的" }
+        ],
+        5: [
+            { word: "at", meaning: "在（某处）" },
+            { word: "home", meaning: "家；住所" },
+            { word: "boat", meaning: "小船；舟" },
+            { word: "cool", meaning: "（因时髦、漂亮且与众不同而）酷的，绝妙的" },
+            { word: "keep", meaning: "保有；留着" },
+            { word: "ball", meaning: "球" },
+            { word: "doll", meaning: "玩偶；玩具娃娃" },
+            { word: "car", meaning: "小汽车；轿车" },
+            { word: "on", meaning: "（覆盖、附着）在……上" },
+            { word: "shelf", meaning: "架子" },
+            { word: "in", meaning: "在……内；在……中" },
+            { word: "box", meaning: "盒子" },
+            { word: "now", meaning: "现在" },
+            { word: "cap", meaning: "帽子" },
+            { word: "map", meaning: "地图" },
+            { word: "under", meaning: "在（或到、通过）……下面" },
+            { word: "still", meaning: "还是；仍然" },
+            { word: "put", meaning: "放；安置" }
+        ],
+        6: [
+            { word: "fifteen", meaning: "十五" },
+            { word: "twelve", meaning: "十二" },
+            { word: "fourteen", meaning: "十四" },
+            { word: "thirteen", meaning: "十三" },
+            { word: "eleven", meaning: "十一" },
+            { word: "choose", meaning: "选择；挑选" },
+            { word: "twenty", meaning: "二十" },
+            { word: "seventeen", meaning: "十七" },
+            { word: "sixteen", meaning: "十六" },
+            { word: "eighteen", meaning: "十八" },
+            { word: "nineteen", meaning: "十九" },
+            { word: "save", meaning: "储蓄；攒钱" },
+            { word: "spend", meaning: "用，花（钱）" },
+            { word: "piggy bank", meaning: "猪形储钱罐" },
+            { word: "pay", meaning: "付费" },
+            { word: "back", meaning: "回到原处" }
+        ]
+    };
     
-    // 创建字母块
-    shuffledLetters.forEach(letter => {
-        const letterButton = document.createElement('button');
-        letterButton.className = 'letter';
-        letterButton.textContent = letter;
-        letterButton.addEventListener('click', () => moveLetter(letterButton));
-        
-        // 添加拖拽功能
-        letterButton.setAttribute('draggable', 'true');
-        letterButton.addEventListener('dragstart', handleDragStart);
-        letterButton.addEventListener('dragend', handleDragEnd);
-        
-        lettersContainer.appendChild(letterButton);
-    });
+    let currentUnit = 1;
+    let currentWordIndex = 0;
+    let currentWord;
     
-    // 为答案区域添加放置区域事件
-    answerContainer.addEventListener('dragover', handleDragOver);
-    answerContainer.addEventListener('drop', handleDrop);
+    const lettersContainer = document.getElementById('letters');
+    const answerContainer = document.getElementById('answer');
+    const meaningElement = document.getElementById('meaning');
+    const checkBtn = document.getElementById('checkBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const unitTabs = document.querySelectorAll('.unit-tab');
     
-    // 为字母区域添加放置区域事件
-    lettersContainer.addEventListener('dragover', handleDragOver);
-    lettersContainer.addEventListener('drop', handleDrop);
-
-    resetButtons();
-    updateProgress();
+    let correctWords = 0; // 记录一次性全对的单词数
+    let currentWordChecked = false; // 跟踪当前单词是否已经检查过
+    const recordKey = 'pep3B_records'; // 为不同年级设置不同的记录键名
     
-    // 清除所有占位符和指示器
-    document.querySelectorAll('.letter-space, .insert-indicator').forEach(space => {
-        space.remove();
-    });
-    
-    // 重置拖拽相关变量
-    draggedElement = null;
-    originalParent = null;
-    originalNextSibling = null;
-    placeholder = null;
-
-    // 重置当前单词检查状态
-    currentWordChecked = false;
-}
-
-// 拖拽相关函数
-let draggedElement = null;
-let originalParent = null;
-let originalNextSibling = null;
-let placeholder = null;
-
-function handleDragStart(e) {
-    draggedElement = this;
-    originalParent = this.parentNode;
-    originalNextSibling = this.nextSibling;
-    
-    // 创建占位符，保持原位置
-    if (originalParent === lettersContainer) {
-        placeholder = document.createElement('div');
-        placeholder.className = 'letter-space';
-        originalParent.insertBefore(placeholder, originalNextSibling);
-    }
-    
-    this.classList.add('dragging');
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', this.textContent);
-    
-    // 延迟设置拖拽图像，避免闪烁
-    setTimeout(() => {
-        this.style.opacity = '0.5';
-    }, 0);
-    
-    startTimer(); // 开始计时
-}
-
-function handleDragEnd(e) {
-    this.classList.remove('dragging');
-    this.style.opacity = '1';
-    
-    // 如果拖拽未成功完成（没有放置到有效区域），恢复原位置
-    if (draggedElement && !draggedElement.parentNode) {
-        if (originalParent === lettersContainer && placeholder) {
-            originalParent.replaceChild(draggedElement, placeholder);
-        } else {
-            originalParent.insertBefore(draggedElement, originalNextSibling);
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
         }
+        return array;
     }
     
-    draggedElement = null;
-    originalParent = null;
-    originalNextSibling = null;
-    
-    // 移除所有占位符
-    document.querySelectorAll('.letter-space').forEach(space => {
-        if (space === placeholder) {
-            space.remove();
-        }
-    });
-    placeholder = null;
-}
-
-function handleDragOver(e) {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    
-    // 获取当前拖动经过的元素
-    const target = e.target;
-    
-    // 如果拖动经过的是字母块，并且在答案区域内
-    if (target.classList.contains('letter') && target.parentNode === answerContainer) {
-        // 计算鼠标位置
-        const rect = target.getBoundingClientRect();
-        const mouseX = e.clientX;
-        const middleX = rect.left + rect.width / 2;
+    function displayWord() {
+        currentWord = units[currentUnit][currentWordIndex];
+        meaningElement.textContent = `${currentWord.meaning}`;
+        const shuffledLetters = shuffleArray([...currentWord.word]);
         
-        // 移除所有临时指示器
-        document.querySelectorAll('.insert-indicator').forEach(el => el.remove());
+        // 清空容器
+        lettersContainer.innerHTML = '';
+        answerContainer.innerHTML = '';
         
-        // 创建插入指示器
-        const indicator = document.createElement('div');
-        indicator.className = 'insert-indicator';
+        // 计算每行可以放置的字母数量（根据容器宽度和字母宽度）
+        const letterWidth = 40; // 字母宽度
+        const letterMargin = 8; // 字母间距
+        const containerWidth = lettersContainer.clientWidth;
+        const lettersPerRow = Math.floor(containerWidth / (letterWidth + letterMargin));
         
-        // 根据鼠标位置决定插入指示器的位置
-        if (mouseX < middleX) {
-            // 鼠标在字母块左侧
-            indicator.style.left = `${rect.left - 2}px`;
-            indicator.style.top = `${rect.top}px`;
-            target.dataset.insertPosition = 'before';
-        } else {
-            // 鼠标在字母块右侧
-            indicator.style.left = `${rect.right}px`;
-            indicator.style.top = `${rect.top}px`;
-            target.dataset.insertPosition = 'after';
-        }
-        
-        // 添加指示器到文档
-        document.body.appendChild(indicator);
-    }
-    
-    return false;
-}
-
-function handleDrop(e) {
-    e.preventDefault();
-    
-    if (!draggedElement) return;
-    
-    // 移除所有插入指示器
-    document.querySelectorAll('.insert-indicator').forEach(el => el.remove());
-    
-    const target = e.target;
-    
-    // 如果放置在答案区域的字母块上
-    if (target.classList.contains('letter') && target.parentNode === answerContainer) {
-        // 根据之前确定的插入位置插入字母块
-        const insertPosition = target.dataset.insertPosition || 'after';
-        
-        if (insertPosition === 'before') {
-            answerContainer.insertBefore(draggedElement, target);
-        } else {
-            answerContainer.insertBefore(draggedElement, target.nextSibling);
-        }
-        
-        // 更新事件监听器
-        draggedElement.removeEventListener('click', () => moveLetter(draggedElement));
-        draggedElement.addEventListener('click', () => returnLetter(draggedElement, placeholder));
-        
-        // 清除插入位置标记
-        target.removeAttribute('data-insert-position');
-    }
-    // 如果放置在答案区域（但不是字母块上）
-    else if (this === answerContainer) {
-        // 从字母区域拖到答案区域
-        answerContainer.appendChild(draggedElement);
-        draggedElement.removeEventListener('click', () => moveLetter(draggedElement));
-        draggedElement.addEventListener('click', () => returnLetter(draggedElement, placeholder));
-    } else if (this === lettersContainer && draggedElement.parentNode === answerContainer) {
-        // 从答案区域拖回字母区域
-        if (placeholder && placeholder.parentNode === lettersContainer) {
-            // 使用替换方法而不是移除后添加，这样可以保持布局
-            lettersContainer.replaceChild(draggedElement, placeholder);
-            placeholder = null;
-        } else {
-            // 如果没有原始占位符，查找一个空的letter-space来替换
-            const emptySpaces = Array.from(lettersContainer.querySelectorAll('.letter-space'));
-            if (emptySpaces.length > 0) {
-                lettersContainer.replaceChild(draggedElement, emptySpaces[0]);
-            } else {
-                // 如果没有空位，直接添加到字母容器末尾
-                lettersContainer.appendChild(draggedElement);
-            }
-        }
-        
-        draggedElement.removeEventListener('click', () => returnLetter(draggedElement, placeholder));
-        draggedElement.addEventListener('click', () => moveLetter(draggedElement));
-    }
-    
-    return false;
-}
-
-function updateProgress() {
-    const progressElement = document.getElementById('progress');
-    const totalWords = units[currentUnit].length;
-    progressElement.textContent = `${currentWordIndex + 1}/${totalWords}`;
-}
-
-function moveLetter(letterButton) {
-    // 创建占位符，保持原位置
-    const placeholder = document.createElement('div');
-    placeholder.className = 'letter-space';
-    
-    // 记录字母块的原始位置
-    const originalIndex = Array.from(lettersContainer.children).indexOf(letterButton);
-    
-    // 插入占位符到字母块的位置
-    if (letterButton.parentNode === lettersContainer) {
-        lettersContainer.insertBefore(placeholder, letterButton);
-    }
-    
-    // 移动字母块到答案区域
-    answerContainer.appendChild(letterButton);
-    
-    // 更新事件监听器
-    letterButton.removeEventListener('click', moveLetter);
-    letterButton.addEventListener('click', function() {
-        returnLetter(letterButton, placeholder);
-    });
-    
-    startTimer(); // 开始计时
-}
-
-function returnLetter(letterButton, placeholder) {
-    // 移除所有可能存在的临时指示器
-    document.querySelectorAll('.insert-indicator').forEach(el => el.remove());
-    
-    // 如果有占位符，替换占位符；否则直接添加到字母容器
-    if (placeholder && placeholder.parentNode === lettersContainer) {
-        // 使用替换方法而不是移除后添加，这样可以保持布局
-        lettersContainer.replaceChild(letterButton, placeholder);
-    } else {
-        // 如果没有占位符，查找一个空的letter-space来替换
-        const emptySpaces = Array.from(lettersContainer.querySelectorAll('.letter-space'));
-        if (emptySpaces.length > 0) {
-            lettersContainer.replaceChild(letterButton, emptySpaces[0]);
-        } else {
-            // 如果没有空位，直接添加到字母容器末尾
+        // 创建字母块
+        shuffledLetters.forEach(letter => {
+            const letterButton = document.createElement('button');
+            letterButton.className = 'letter';
+            letterButton.textContent = letter;
+            letterButton.addEventListener('click', () => moveLetter(letterButton));
+            
+            // 添加拖拽功能
+            letterButton.setAttribute('draggable', 'true');
+            letterButton.addEventListener('dragstart', handleDragStart);
+            letterButton.addEventListener('dragend', handleDragEnd);
+            
             lettersContainer.appendChild(letterButton);
-        }
-    }
+        });
+        
+        // 为答案区域添加放置区域事件
+        answerContainer.addEventListener('dragover', handleDragOver);
+        answerContainer.addEventListener('drop', handleDrop);
+        
+        // 为字母区域添加放置区域事件
+        lettersContainer.addEventListener('dragover', handleDragOver);
+        lettersContainer.addEventListener('drop', handleDrop);
     
-    // 重新绑定事件
-    letterButton.removeEventListener('click', function() {
-        returnLetter(letterButton, placeholder);
-    });
-    letterButton.addEventListener('click', function() {
-        moveLetter(letterButton);
-    });
-}
-
-function checkAnswer() {
-    const userAnswer = Array.from(answerContainer.children)
-        .filter(child => child.classList.contains('letter'))
-        .map(child => child.textContent)
-        .join('');
+        resetButtons();
+        updateProgress();
         
-    if (userAnswer === currentWord.word) {
-        checkBtn.textContent = "正确";
-        checkBtn.classList.add('correct');
-        nextBtn.textContent = "下一个";
-        nextBtn.classList.add('correct');
-        nextBtn.classList.remove('incorrect');
-        playAudio(currentWord.word);
-        
-        // 如果是首次检查并且正确，计数加1
-        if (!currentWordChecked) {
-            correctWords++;
-        }
-        
-        // 检查是否完成当前单元
-        if (currentWordIndex === units[currentUnit].length - 1) {
-            nextBtn.textContent = "恭喜完成"; // 修改按钮文本
-            // 训练完成时保存记录并更新显示
-            saveTrainingRecord();
-            displayTrainingRecords(); // 明确调用更新显示函数
-            clearInterval(timerInterval); // 停止计时
-        }
-    } else {
-        checkBtn.textContent = "错误";
-        checkBtn.classList.add('incorrect');
-        nextBtn.textContent = "请订正";
-        nextBtn.classList.add('incorrect');
-        nextBtn.classList.remove('correct');
-        
-        // 标记当前单词已经被检查过且错误
-        currentWordChecked = true;
-        
-        setTimeout(() => {
-            checkBtn.textContent = "检查";
-            checkBtn.classList.remove('incorrect');
-        }, 2000);
-    }
-}
-
-function nextWord() {
-    if (checkBtn.textContent === "正确") {
         // 清除所有占位符和指示器
         document.querySelectorAll('.letter-space, .insert-indicator').forEach(space => {
             space.remove();
         });
-        
-        // 重置当前单词检查状态
-        currentWordChecked = false;
-        
-        currentWordIndex = (currentWordIndex + 1) % units[currentUnit].length;
-        displayWord();
-        resetButtons();
-        
-        // 如果到达单元末尾，重置正确计数
-        if (currentWordIndex === 0) {
-            correctWords = 0;
-        }
         
         // 重置拖拽相关变量
         draggedElement = null;
         originalParent = null;
         originalNextSibling = null;
         placeholder = null;
-    } else if (nextBtn.textContent === "恭喜完成") {
-        // 不执行任何操作，直接返回
-        return;
+    
+        // 重置当前单词检查状态
+        currentWordChecked = false;
     }
-}
-
-function playAudio(word) {
-    const audio = new Audio(`https://dict.youdao.com/dictvoice?audio=${word}&type=1`);
-    audio.play().catch(error => console.error('Error playing audio:', error));
-}
-
-function changeUnit(unit) {
-    resetTimer(); // 重置计时器
-    correctWords = 0; // 重置正确单词计数
-    currentWordChecked = false; // 重置当前单词检查状态
     
-    // 清除所有占位符和指示器
-    document.querySelectorAll('.letter-space, .insert-indicator').forEach(space => {
-        space.remove();
-    });
+    // 拖拽相关函数
+    let draggedElement = null;
+    let originalParent = null;
+    let originalNextSibling = null;
+    let placeholder = null;
     
-    currentUnit = unit;
-    currentWordIndex = 0;
-    displayWord();
-    unitTabs.forEach(tab => tab.classList.remove('active'));
-    document.querySelector(`.unit-tab[data-unit="${unit}"]`).classList.add('active');
-    
-    // 更新训练记录显示
-    displayTrainingRecords();
-    
-    // 重置拖拽相关变量
-    draggedElement = null;
-    originalParent = null;
-    originalNextSibling = null;
-    placeholder = null;
-    // 不再在这里调用 startTimer()
-}
-
-function resetButtons() {
-    checkBtn.textContent = "检查";
-    checkBtn.classList.remove('correct', 'incorrect');
-    nextBtn.textContent = "下一个";
-    nextBtn.classList.remove('correct', 'incorrect');
-}
-
-function resetTimer() {
-    clearInterval(timerInterval); // 停止计时
-    seconds = 0; // 重置计时器
-    document.getElementById('timer').textContent = "00:00"; // 显示为零
-    timerInterval = null; // 清空计时器变量
-}
-
-// 修改保存训练记录函数
-function saveTrainingRecord() {
-    const loggedInUser = localStorage.getItem('loggedInUser');
-    if (!loggedInUser) return;
-    
-    const userData = JSON.parse(loggedInUser);
-    const username = userData.username;
-    
-    // 构建记录对象
-    const record = {
-        date: new Date().toLocaleDateString(),
-        timeUsed: seconds,
-        timeDisplay: formatTime(seconds),
-        correctWords: correctWords,
-        totalWords: units[currentUnit].length,
-        timestamp: new Date().getTime()
-    };
-    
-    // 获取所有记录，不再根据日期清除旧记录
-    let allRecords = JSON.parse(localStorage.getItem(`${username}_${recordKey}`) || '[]');
-    
-    // 添加新记录
-    allRecords.push(record);
-    
-    // 按规则排序：一次性全对数量（降序）→训练用时（升序）→日期（降序）
-    allRecords.sort((a, b) => {
-        if (a.correctWords !== b.correctWords) {
-            return b.correctWords - a.correctWords; // 全对数量降序
+    function handleDragStart(e) {
+        draggedElement = this;
+        originalParent = this.parentNode;
+        originalNextSibling = this.nextSibling;
+        
+        // 创建占位符，保持原位置
+        if (originalParent === lettersContainer) {
+            placeholder = document.createElement('div');
+            placeholder.className = 'letter-space';
+            originalParent.insertBefore(placeholder, originalNextSibling);
         }
-        if (a.timeUsed !== b.timeUsed) {
-            return a.timeUsed - b.timeUsed; // 用时升序
+        
+        this.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', this.textContent);
+        
+        // 延迟设置拖拽图像，避免闪烁
+        setTimeout(() => {
+            this.style.opacity = '0.5';
+        }, 0);
+        
+        startTimer(); // 开始计时
+    }
+    
+    function handleDragEnd(e) {
+        this.classList.remove('dragging');
+        this.style.opacity = '1';
+        
+        // 如果拖拽未成功完成（没有放置到有效区域），恢复原位置
+        if (draggedElement && !draggedElement.parentNode) {
+            if (originalParent === lettersContainer && placeholder) {
+                originalParent.replaceChild(draggedElement, placeholder);
+            } else {
+                originalParent.insertBefore(draggedElement, originalNextSibling);
+            }
         }
-        return b.timestamp - a.timestamp; // 日期降序
-    });
-    
-    // 限制记录总数以避免localStorage溢出
-    const MAX_RECORDS = 100; // 每个用户最多保存100条记录
-    if (allRecords.length > MAX_RECORDS) {
-        allRecords = allRecords.slice(-MAX_RECORDS);
+        
+        draggedElement = null;
+        originalParent = null;
+        originalNextSibling = null;
+        
+        // 移除所有占位符
+        document.querySelectorAll('.letter-space').forEach(space => {
+            if (space === placeholder) {
+                space.remove();
+            }
+        });
+        placeholder = null;
     }
     
-    // 保存回localStorage
-    localStorage.setItem(`${username}_${recordKey}`, JSON.stringify(allRecords));
-    
-    // 确保更新显示
-    displayTrainingRecords();
-}
-
-// 修改显示训练记录函数，只显示今天的记录
-function displayTrainingRecords() {
-    const loggedInUser = localStorage.getItem('loggedInUser');
-    if (!loggedInUser) return;
-    
-    const userData = JSON.parse(loggedInUser);
-    const username = userData.username;
-    
-    // 获取所有记录
-    const allRecords = JSON.parse(localStorage.getItem(`${username}_${recordKey}`) || '[]');
-    
-    // 获取今天的日期
-    const today = new Date().toLocaleDateString();
-    
-    // 筛选今天的记录
-    const todayRecords = allRecords.filter(record => record.date === today);
-    
-    // 获取表格主体
-    const tableBody = document.getElementById('recordsTableBody');
-    tableBody.innerHTML = '';
-    
-    // 填充记录
-    todayRecords.forEach(record => {
-        const row = document.createElement('tr');
+    function handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
         
-        const dateCell = document.createElement('td');
-        dateCell.textContent = record.date;
+        // 获取当前拖动经过的元素
+        const target = e.target;
         
-        const timeCell = document.createElement('td');
-        timeCell.textContent = record.timeDisplay;
+        // 如果拖动经过的是字母块，并且在答案区域内
+        if (target.classList.contains('letter') && target.parentNode === answerContainer) {
+            // 计算鼠标位置
+            const rect = target.getBoundingClientRect();
+            const mouseX = e.clientX;
+            const middleX = rect.left + rect.width / 2;
+            
+            // 移除所有临时指示器
+            document.querySelectorAll('.insert-indicator').forEach(el => el.remove());
+            
+            // 创建插入指示器
+            const indicator = document.createElement('div');
+            indicator.className = 'insert-indicator';
+            
+            // 根据鼠标位置决定插入指示器的位置
+            if (mouseX < middleX) {
+                // 鼠标在字母块左侧
+                indicator.style.left = `${rect.left - 2}px`;
+                indicator.style.top = `${rect.top}px`;
+                target.dataset.insertPosition = 'before';
+            } else {
+                // 鼠标在字母块右侧
+                indicator.style.left = `${rect.right}px`;
+                indicator.style.top = `${rect.top}px`;
+                target.dataset.insertPosition = 'after';
+            }
+            
+            // 添加指示器到文档
+            document.body.appendChild(indicator);
+        }
         
-        const correctCell = document.createElement('td');
-        correctCell.textContent = `${record.correctWords}/${record.totalWords}`;
-        
-        const totalCell = document.createElement('td');
-        totalCell.textContent = record.totalWords;
-        
-        row.appendChild(dateCell);
-        row.appendChild(timeCell);
-        row.appendChild(correctCell);
-        row.appendChild(totalCell);
-        
-        tableBody.appendChild(row);
-    });
-}
-
-// 添加日期变化检测，以便在跨天时更新显示
-document.addEventListener('DOMContentLoaded', function() {
-    displayLoggedInUser();
-    displayTrainingRecords(); // 添加显示训练记录
-    
-    // 添加时间变化检测，每分钟检查一次是否跨天
-    setInterval(checkDateChange, 60000); // 每分钟检查一次
-});
-
-// 检查日期变化的函数
-let lastCheckedDate = new Date().toLocaleDateString();
-function checkDateChange() {
-    const currentDate = new Date().toLocaleDateString();
-    if (currentDate !== lastCheckedDate) {
-        // 日期已变化，更新界面显示
-        lastCheckedDate = currentDate;
-        displayTrainingRecords(); // 重新加载今天的记录
+        return false;
     }
-}
-
-// 添加格式化时间显示函数（如果尚未存在）
-function formatTime(totalSeconds) {
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-}
-
-checkBtn.addEventListener('click', checkAnswer);
-nextBtn.addEventListener('click', () => {
-    if (nextBtn.textContent === "恭喜完成") {
-        // 不执行任何操作，直接返回
-        return;
-    }
-    nextWord(); // 仅在不是"恭喜完成"时调用 nextWord
-});
-
-unitTabs.forEach(tab => {
-    tab.addEventListener('click', () => changeUnit(parseInt(tab.dataset.unit)));
-});
-
-displayWord();
-
-let timerInterval;
-let seconds = 0;
-
-document.getElementById('homeBtn').addEventListener('click', () => {
-    window.location.href = './pepwordrecite.html'; // 修改返回路径到同目录下的pepwordrecite.html
-});
-
-// 显示当前登录的学生姓名
-function displayLoggedInUser() {
-    const loggedInUser = localStorage.getItem('loggedInUser');
-    const studentNameDisplay = document.getElementById('studentName');
     
-    if (loggedInUser) {
+    function handleDrop(e) {
+        e.preventDefault();
+        
+        if (!draggedElement) return;
+        
+        // 移除所有插入指示器
+        document.querySelectorAll('.insert-indicator').forEach(el => el.remove());
+        
+        const target = e.target;
+        
+        // 如果放置在答案区域的字母块上
+        if (target.classList.contains('letter') && target.parentNode === answerContainer) {
+            // 根据之前确定的插入位置插入字母块
+            const insertPosition = target.dataset.insertPosition || 'after';
+            
+            if (insertPosition === 'before') {
+                answerContainer.insertBefore(draggedElement, target);
+            } else {
+                answerContainer.insertBefore(draggedElement, target.nextSibling);
+            }
+            
+            // 更新事件监听器
+            draggedElement.removeEventListener('click', () => moveLetter(draggedElement));
+            draggedElement.addEventListener('click', () => returnLetter(draggedElement, placeholder));
+            
+            // 清除插入位置标记
+            target.removeAttribute('data-insert-position');
+        }
+        // 如果放置在答案区域（但不是字母块上）
+        else if (this === answerContainer) {
+            // 从字母区域拖到答案区域
+            answerContainer.appendChild(draggedElement);
+            draggedElement.removeEventListener('click', () => moveLetter(draggedElement));
+            draggedElement.addEventListener('click', () => returnLetter(draggedElement, placeholder));
+        } else if (this === lettersContainer && draggedElement.parentNode === answerContainer) {
+            // 从答案区域拖回字母区域
+            if (placeholder && placeholder.parentNode === lettersContainer) {
+                // 使用替换方法而不是移除后添加，这样可以保持布局
+                lettersContainer.replaceChild(draggedElement, placeholder);
+                placeholder = null;
+            } else {
+                // 如果没有原始占位符，查找一个空的letter-space来替换
+                const emptySpaces = Array.from(lettersContainer.querySelectorAll('.letter-space'));
+                if (emptySpaces.length > 0) {
+                    lettersContainer.replaceChild(draggedElement, emptySpaces[0]);
+                } else {
+                    // 如果没有空位，直接添加到字母容器末尾
+                    lettersContainer.appendChild(draggedElement);
+                }
+            }
+            
+            draggedElement.removeEventListener('click', () => returnLetter(draggedElement, placeholder));
+            draggedElement.addEventListener('click', () => moveLetter(draggedElement));
+        }
+        
+        return false;
+    }
+    
+    function updateProgress() {
+        const progressElement = document.getElementById('progress');
+        const totalWords = units[currentUnit].length;
+        progressElement.textContent = `${currentWordIndex + 1}/${totalWords}`;
+    }
+    
+    function moveLetter(letterButton) {
+        // 创建占位符，保持原位置
+        const placeholder = document.createElement('div');
+        placeholder.className = 'letter-space';
+        
+        // 记录字母块的原始位置
+        const originalIndex = Array.from(lettersContainer.children).indexOf(letterButton);
+        
+        // 插入占位符到字母块的位置
+        if (letterButton.parentNode === lettersContainer) {
+            lettersContainer.insertBefore(placeholder, letterButton);
+        }
+        
+        // 移动字母块到答案区域
+        answerContainer.appendChild(letterButton);
+        
+        // 更新事件监听器
+        letterButton.removeEventListener('click', moveLetter);
+        letterButton.addEventListener('click', function() {
+            returnLetter(letterButton, placeholder);
+        });
+        
+        startTimer(); // 开始计时
+    }
+    
+    function returnLetter(letterButton, placeholder) {
+        // 移除所有可能存在的临时指示器
+        document.querySelectorAll('.insert-indicator').forEach(el => el.remove());
+        
+        // 如果有占位符，替换占位符；否则直接添加到字母容器
+        if (placeholder && placeholder.parentNode === lettersContainer) {
+            // 使用替换方法而不是移除后添加，这样可以保持布局
+            lettersContainer.replaceChild(letterButton, placeholder);
+        } else {
+            // 如果没有占位符，查找一个空的letter-space来替换
+            const emptySpaces = Array.from(lettersContainer.querySelectorAll('.letter-space'));
+            if (emptySpaces.length > 0) {
+                lettersContainer.replaceChild(letterButton, emptySpaces[0]);
+            } else {
+                // 如果没有空位，直接添加到字母容器末尾
+                lettersContainer.appendChild(letterButton);
+            }
+        }
+        
+        // 重新绑定事件
+        letterButton.removeEventListener('click', function() {
+            returnLetter(letterButton, placeholder);
+        });
+        letterButton.addEventListener('click', function() {
+            moveLetter(letterButton);
+        });
+    }
+    
+    function checkAnswer() {
+        const userAnswer = Array.from(answerContainer.children)
+            .filter(child => child.classList.contains('letter'))
+            .map(child => child.textContent)
+            .join('');
+            
+        if (userAnswer === currentWord.word) {
+            checkBtn.textContent = "正确";
+            checkBtn.classList.add('correct');
+            nextBtn.textContent = "下一个";
+            nextBtn.classList.add('correct');
+            nextBtn.classList.remove('incorrect');
+            playAudio(currentWord.word);
+            
+            // 如果是首次检查并且正确，计数加1
+            if (!currentWordChecked) {
+                correctWords++;
+            }
+            
+            // 检查是否完成当前单元
+            if (currentWordIndex === units[currentUnit].length - 1) {
+                nextBtn.textContent = "恭喜完成"; // 修改按钮文本
+                // 训练完成时保存记录并更新显示
+                saveTrainingRecord();
+                displayTrainingRecords(); // 明确调用更新显示函数
+                clearInterval(timerInterval); // 停止计时
+            }
+        } else {
+            checkBtn.textContent = "错误";
+            checkBtn.classList.add('incorrect');
+            nextBtn.textContent = "请订正";
+            nextBtn.classList.add('incorrect');
+            nextBtn.classList.remove('correct');
+            
+            // 标记当前单词已经被检查过且错误
+            currentWordChecked = true;
+            
+            setTimeout(() => {
+                checkBtn.textContent = "检查";
+                checkBtn.classList.remove('incorrect');
+            }, 2000);
+        }
+    }
+    
+    function nextWord() {
+        if (checkBtn.textContent === "正确") {
+            // 清除所有占位符和指示器
+            document.querySelectorAll('.letter-space, .insert-indicator').forEach(space => {
+                space.remove();
+            });
+            
+            // 重置当前单词检查状态
+            currentWordChecked = false;
+            
+            currentWordIndex = (currentWordIndex + 1) % units[currentUnit].length;
+            displayWord();
+            resetButtons();
+            
+            // 如果到达单元末尾，重置正确计数
+            if (currentWordIndex === 0) {
+                correctWords = 0;
+            }
+            
+            // 重置拖拽相关变量
+            draggedElement = null;
+            originalParent = null;
+            originalNextSibling = null;
+            placeholder = null;
+        } else if (nextBtn.textContent === "恭喜完成") {
+            // 不执行任何操作，直接返回
+            return;
+        }
+    }
+    
+    function playAudio(word) {
+        const audio = new Audio(`https://dict.youdao.com/dictvoice?audio=${word}&type=1`);
+        audio.play().catch(error => console.error('Error playing audio:', error));
+    }
+    
+    function changeUnit(unit) {
+        resetTimer(); // 重置计时器
+        correctWords = 0; // 重置正确单词计数
+        currentWordChecked = false; // 重置当前单词检查状态
+        
+        // 清除所有占位符和指示器
+        document.querySelectorAll('.letter-space, .insert-indicator').forEach(space => {
+            space.remove();
+        });
+        
+        currentUnit = unit;
+        currentWordIndex = 0;
+        displayWord();
+        unitTabs.forEach(tab => tab.classList.remove('active'));
+        document.querySelector(`.unit-tab[data-unit="${unit}"]`).classList.add('active');
+        
+        // 更新训练记录显示
+        displayTrainingRecords();
+        
+        // 重置拖拽相关变量
+        draggedElement = null;
+        originalParent = null;
+        originalNextSibling = null;
+        placeholder = null;
+        // 不再在这里调用 startTimer()
+    }
+    
+    function resetButtons() {
+        checkBtn.textContent = "检查";
+        checkBtn.classList.remove('correct', 'incorrect');
+        nextBtn.textContent = "下一个";
+        nextBtn.classList.remove('correct', 'incorrect');
+    }
+    
+    function resetTimer() {
+        clearInterval(timerInterval); // 停止计时
+        seconds = 0; // 重置计时器
+        document.getElementById('timer').textContent = "00:00"; // 显示为零
+        timerInterval = null; // 清空计时器变量
+    }
+    
+    // 修改保存训练记录函数
+    function saveTrainingRecord() {
+        const loggedInUser = localStorage.getItem('loggedInUser');
+        if (!loggedInUser) return;
+        
         const userData = JSON.parse(loggedInUser);
-        studentNameDisplay.textContent = `${userData.username} 正在训练`;
-    } else {
-        studentNameDisplay.textContent = '未登录';
+        const username = userData.username;
+        
+        // 构建记录对象
+        const record = {
+            date: new Date().toLocaleDateString(),
+            timeUsed: seconds,
+            timeDisplay: formatTime(seconds),
+            correctWords: correctWords,
+            totalWords: units[currentUnit].length,
+            timestamp: new Date().getTime()
+        };
+        
+        // 获取所有记录，不再根据日期清除旧记录
+        let allRecords = JSON.parse(localStorage.getItem(`${username}_${recordKey}`) || '[]');
+        
+        // 添加新记录
+        allRecords.push(record);
+        
+        // 按规则排序：一次性全对数量（降序）→训练用时（升序）→日期（降序）
+        allRecords.sort((a, b) => {
+            if (a.correctWords !== b.correctWords) {
+                return b.correctWords - a.correctWords; // 全对数量降序
+            }
+            if (a.timeUsed !== b.timeUsed) {
+                return a.timeUsed - b.timeUsed; // 用时升序
+            }
+            return b.timestamp - a.timestamp; // 日期降序
+        });
+        
+        // 限制记录总数以避免localStorage溢出
+        const MAX_RECORDS = 100; // 每个用户最多保存100条记录
+        if (allRecords.length > MAX_RECORDS) {
+            allRecords = allRecords.slice(-MAX_RECORDS);
+        }
+        
+        // 保存回localStorage
+        localStorage.setItem(`${username}_${recordKey}`, JSON.stringify(allRecords));
+        
+        // 确保更新显示
+        displayTrainingRecords();
     }
-}
-
-// 页面加载时显示用户信息
-document.addEventListener('DOMContentLoaded', function() {
-    displayLoggedInUser();
-    displayTrainingRecords(); // 添加显示训练记录
-});
-
-function startTimer() {
-    if (!timerInterval) {
-        timerInterval = setInterval(() => {
-            seconds++;
-            const minutes = String(Math.floor(seconds / 60)).padStart(2, '0');
-            const secs = String(seconds % 60).padStart(2, '0');
-            document.getElementById('timer').textContent = `${minutes}:${secs}`;
-        }, 1000);
+    
+    // 修改显示训练记录函数，只显示今天的记录
+    function displayTrainingRecords() {
+        const loggedInUser = localStorage.getItem('loggedInUser');
+        if (!loggedInUser) return;
+        
+        const userData = JSON.parse(loggedInUser);
+        const username = userData.username;
+        
+        // 获取所有记录
+        const allRecords = JSON.parse(localStorage.getItem(`${username}_${recordKey}`) || '[]');
+        
+        // 获取今天的日期
+        const today = new Date().toLocaleDateString();
+        
+        // 筛选今天的记录
+        const todayRecords = allRecords.filter(record => record.date === today);
+        
+        // 获取表格主体
+        const tableBody = document.getElementById('recordsTableBody');
+        tableBody.innerHTML = '';
+        
+        // 填充记录
+        todayRecords.forEach(record => {
+            const row = document.createElement('tr');
+            
+            const dateCell = document.createElement('td');
+            dateCell.textContent = record.date;
+            
+            const timeCell = document.createElement('td');
+            timeCell.textContent = record.timeDisplay;
+            
+            const correctCell = document.createElement('td');
+            correctCell.textContent = `${record.correctWords}/${record.totalWords}`;
+            
+            const totalCell = document.createElement('td');
+            totalCell.textContent = record.totalWords;
+            
+            row.appendChild(dateCell);
+            row.appendChild(timeCell);
+            row.appendChild(correctCell);
+            row.appendChild(totalCell);
+            
+            tableBody.appendChild(row);
+        });
     }
-}
-</script>
-</body>
-</html>
-
-
+    
+    // 添加日期变化检测，以便在跨天时更新显示
+    document.addEventListener('DOMContentLoaded', function() {
+        displayLoggedInUser();
+        displayTrainingRecords(); // 添加显示训练记录
+        
+        // 添加时间变化检测，每分钟检查一次是否跨天
+        setInterval(checkDateChange, 60000); // 每分钟检查一次
+    });
+    
+    // 检查日期变化的函数
+    let lastCheckedDate = new Date().toLocaleDateString();
+    function checkDateChange() {
+        const currentDate = new Date().toLocaleDateString();
+        if (currentDate !== lastCheckedDate) {
+            // 日期已变化，更新界面显示
+            lastCheckedDate = currentDate;
+            displayTrainingRecords(); // 重新加载今天的记录
+        }
+    }
+    
+    // 添加格式化时间显示函数（如果尚未存在）
+    function formatTime(totalSeconds) {
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+    
+    checkBtn.addEventListener('click', checkAnswer);
+    nextBtn.addEventListener('click', () => {
+        if (nextBtn.textContent === "恭喜完成") {
+            // 不执行任何操作，直接返回
+            return;
+        }
+        nextWord(); // 仅在不是"恭喜完成"时调用 nextWord
+    });
+    
+    unitTabs.forEach(tab => {
+        tab.addEventListener('click', () => changeUnit(parseInt(tab.dataset.unit)));
+    });
+    
+    displayWord();
+    
+    let timerInterval;
+    let seconds = 0;
+    
+    document.getElementById('homeBtn').addEventListener('click', () => {
+        window.location.href = './pepwordrecite.html'; // 修改返回路径到同目录下的pepwordrecite.html
+    });
+    
+    // 显示当前登录的学生姓名
+    function displayLoggedInUser() {
+        const loggedInUser = localStorage.getItem('loggedInUser');
+        const studentNameDisplay = document.getElementById('studentName');
+        
+        if (loggedInUser) {
+            const userData = JSON.parse(loggedInUser);
+            studentNameDisplay.textContent = `${userData.username} 正在训练`;
+        } else {
+            studentNameDisplay.textContent = '未登录';
+        }
+    }
+    
+    // 页面加载时显示用户信息
+    document.addEventListener('DOMContentLoaded', function() {
+        displayLoggedInUser();
+        displayTrainingRecords(); // 添加显示训练记录
+    });
+    
+    function startTimer() {
+        if (!timerInterval) {
+            timerInterval = setInterval(() => {
+                seconds++;
+                const minutes = String(Math.floor(seconds / 60)).padStart(2, '0');
+                const secs = String(seconds % 60).padStart(2, '0');
+                document.getElementById('timer').textContent = `${minutes}:${secs}`;
+            }, 1000);
+        }
+    }
+    </script>
+    </body>
+    </html>
+    
+    
+    

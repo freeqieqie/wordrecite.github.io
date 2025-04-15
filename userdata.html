@@ -388,8 +388,8 @@
                 return rank.includes('2阶') ? 40 : 41;
             } else if (rank.includes('黄金')) {
                 return rank.includes('2阶') ? 50 : 51;
-            } else if (rank === '白银') {
-                return 60;
+            } else if (rank.includes('白银')) {
+                return rank.includes('2阶') ? 60 : 61;
             } else { // 青铜
                 return 70;
             }
@@ -448,27 +448,24 @@
             return parseInt(parts[0]) * 60 + parseInt(parts[1]);
         }
 
+        // 添加计算等级的函数
         function calculateRank(score, duration, totalWords) {
             const durationSeconds = convertDurationToSeconds(duration);
-            if (score < totalWords) {
-                return "青铜";
-            }
-            const kingTime = Math.floor(totalWords * 1.5);
+            const kingTime = Math.floor(totalWords * 1.4);
+            
             if (durationSeconds <= kingTime) {
                 const starDiff = kingTime - durationSeconds;
                 return starDiff === 0 ? "王者" : `王者${starDiff}星`;
-            }
-            const overTime = durationSeconds - kingTime;
-            if (overTime <= 10) {
-                return overTime <= 5 ? "星耀2阶" : "星耀1阶";
-            } else if (overTime <= 20) {
-                return overTime <= 15 ? "钻石2阶" : "钻石1阶";
-            } else if (overTime <= 30) {
-                return overTime <= 25 ? "铂金2阶" : "铂金1阶";
-            } else if (overTime <= 40) {
-                return overTime <= 35 ? "黄金2阶" : "黄金1阶";
             } else {
-                return "白银";
+                const overTime = durationSeconds - kingTime;
+                const drop = Math.floor(overTime / 10);
+                const remainder = overTime % 10;
+                const levelOrder = ["星耀", "钻石", "铂金", "黄金", "白银", "青铜"];
+                if (drop >= levelOrder.length) {
+                    return "青铜";
+                } else {
+                    return remainder <= 5 ? `${levelOrder[drop]}2阶` : `${levelOrder[drop]}1阶`;
+                }
             }
         }
 
@@ -484,12 +481,11 @@
                 iconName = '04bojin';
             } else if (rank.includes('黄金')) {
                 iconName = '03huangjin';
-            } else if (rank === '白银') {
+            } else if (rank.includes('白银')) {  // 修改处：原来为rank === '白银'
                 iconName = '02baiyin';
-            } else {
+            } else { // 青铜
                 iconName = '01qingtong';
             }
-            // 修改图片路径，确保从 userdata.html 正确加载图片
             return `./wordrev/pics/rank/${iconName}.png`;
         }
         

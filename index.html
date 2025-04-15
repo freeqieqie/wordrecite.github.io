@@ -26,6 +26,15 @@
             margin-bottom: 10px;
         }
         
+        .login-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 30px;
+        }
+        
         .login-container {
             background-color: #E8F6E9;
             border-radius: 10px;
@@ -33,7 +42,25 @@
             padding: 30px;
             width: 100%;
             max-width: 400px;
-            margin-bottom: 30px;
+            margin-bottom: 0;
+        }
+        
+        .admin-container {
+            background-color: #F6E8F4;
+        }
+        
+        .admin-container h3 {
+            color: #6e2c49;
+            margin-top: 0;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .student-container h3 {
+            color: #2c6e49;
+            margin-top: 0;
+            text-align: center;
+            margin-bottom: 20px;
         }
         
         .form-group {
@@ -70,6 +97,35 @@
         
         .login-btn:hover {
             background-color: #45a049;
+        }
+        
+        .admin-btn {
+            background-color: #9C4668;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        
+        .admin-btn:hover {
+            background-color: #853A5A;
+        }
+        
+        .admin-btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .admin-btn-group .admin-btn {
+            flex: 1;
+        }
+        
+        #adminInfo .admin-btn {
+            margin: 10px 0;
         }
         
         .user-info {
@@ -131,7 +187,6 @@
             color: black;
         }
         
-        /* 学习内容部分样式 */
         .content-section {
             display: flex;
             flex-wrap: wrap;
@@ -187,6 +242,13 @@
             text-align: center;
             width: 100%;
         }
+        
+        @media (max-width: 768px) {
+            .login-wrapper {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -195,28 +257,54 @@
         <p>快乐学习，成就未来</p>
     </div>
     
-    <div class="login-container" id="loginContainer">
-        <div id="loginForm">
-            <div class="form-group">
-                <label for="username">请输入学生姓名</label>
-                <input type="text" id="username" placeholder="请输入您的姓名">
+    <div class="login-wrapper">
+        <div class="login-container student-container" id="loginContainer">
+            <h3>学生登录</h3>
+            <div id="loginForm">
+                <div class="form-group">
+                    <label for="username">请输入学生姓名</label>
+                    <input type="text" id="username" placeholder="请输入您的姓名">
+                </div>
+                <div class="form-group">
+                    <label for="password">请输入6位密码</label>
+                    <input type="password" id="password" placeholder="请输入6位密码">
+                </div>
+                <button class="login-btn" id="loginBtn">登录</button>
             </div>
-            <div class="form-group">
-                <label for="password">请输入6位密码</label>
-                <input type="password" id="password" placeholder="请输入6位密码">
+            
+            <div class="user-info" id="userInfo">
+                <div class="user-name" id="displayUsername"></div>
+                <button class="user-btn" id="profileBtn">个人中心</button>
+                <button class="user-btn" id="changePasswordBtn">修改密码</button>
+                <button class="user-btn" id="logoutBtn">退出登录</button>
             </div>
-            <button class="login-btn" id="loginBtn">登录</button>
         </div>
         
-        <div class="user-info" id="userInfo">
-            <div class="user-name" id="displayUsername"></div>
-            <button class="user-btn" id="profileBtn">个人中心</button>
-            <button class="user-btn" id="changePasswordBtn">修改密码</button>
-            <button class="user-btn" id="logoutBtn">退出登录</button>
+        <div class="login-container admin-container" id="adminContainer">
+            <h3>管理员入口</h3>
+            <div id="adminLoginForm">
+                <div class="form-group">
+                    <label for="adminUsername">管理员用户名</label>
+                    <input type="text" id="adminUsername" placeholder="请输入管理员用户名">
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">管理员密码</label>
+                    <input type="password" id="adminPassword" placeholder="请输入管理员密码">
+                </div>
+                <div class="admin-btn-group">
+                    <button class="admin-btn" id="adminLoginBtn">登录</button>
+                    <button class="admin-btn" id="adminRegisterBtn">注册</button>
+                </div>
+            </div>
+            
+            <div class="user-info" id="adminInfo" style="display:none;">
+                <div class="user-name" id="displayAdminUsername"></div>
+                <button class="admin-btn" id="adminManageBtn">进入管理后台</button>
+                <button class="admin-btn" id="adminLogoutBtn">退出登录</button>
+            </div>
         </div>
     </div>
     
-    <!-- 修改密码弹窗 -->
     <div id="passwordModal" class="modal">
         <div class="modal-content">
             <span class="close" id="closeModal">&times;</span>
@@ -233,7 +321,6 @@
         </div>
     </div>
     
-    <!-- 学习内容部分 -->
     <div class="content-section">
         <div class="content-card">
             <h3>单词默写训练</h3>
@@ -245,6 +332,13 @@
             <h3>阅读类单词快训</h3>
             <p>挑战单词量之王，霸榜还是屠榜？</p>
             <button class="content-btn" id="wordRevBtn">开始训练</button>
+        </div>
+        
+        <!-- 新增音标训练卡片 -->
+        <div class="content-card">
+            <h3>音标训练</h3>
+            <p>掌握发音基础，提高语音能力</p>
+            <button class="content-btn" id="IPABtn">开始训练</button>
         </div>
         
         <div class="content-card">
@@ -259,30 +353,41 @@
     </div>
 
     <script>
-        // 用户数据存储 - 改为从localStorage读取
         let users = {
-            '宋飏': {
-                password: '000000',
-                isLoggedIn: false
-            }
+            '宋飏': { password: '000000', isLoggedIn: false },
+            '谢健嫦': { password: '000000', isLoggedIn: false },
+            '黎怀键': { password: '000000', isLoggedIn: false },
+            '郑圆': { password: '000000', isLoggedIn: false },
+            '霍铭彬': { password: '000000', isLoggedIn: false },
+            '岑芊羽': { password: '000000', isLoggedIn: false },
+            '陈谦逸': { password: '000000', isLoggedIn: false }
         };
         
-        // 从localStorage加载用户数据
+        let adminUsers = {};
+        
         function loadUsersFromStorage() {
             const storedUsers = localStorage.getItem('usersData');
             if (storedUsers) {
                 const parsedUsers = JSON.parse(storedUsers);
-                // 合并现有用户和存储的用户数据
                 users = {...users, ...parsedUsers};
             }
         }
         
-        // 保存用户数据到localStorage
         function saveUsersToStorage() {
             localStorage.setItem('usersData', JSON.stringify(users));
         }
         
-        // DOM元素
+        function loadAdminFromStorage() {
+            const storedAdmin = localStorage.getItem('adminData');
+            if (storedAdmin) {
+                adminUsers = JSON.parse(storedAdmin);
+            }
+        }
+        
+        function saveAdminToStorage() {
+            localStorage.setItem('adminData', JSON.stringify(adminUsers));
+        }
+        
         const loginForm = document.getElementById('loginForm');
         const userInfo = document.getElementById('userInfo');
         const usernameInput = document.getElementById('username');
@@ -298,35 +403,61 @@
         const confirmPasswordInput = document.getElementById('confirmPassword');
         const updatePasswordBtn = document.getElementById('updatePasswordBtn');
         
-        // 内容区按钮
+        const adminLoginForm = document.getElementById('adminLoginForm');
+        const adminInfo = document.getElementById('adminInfo');
+        const adminUsernameInput = document.getElementById('adminUsername');
+        const adminPasswordInput = document.getElementById('adminPassword');
+        const displayAdminUsername = document.getElementById('displayAdminUsername');
+        const adminLoginBtn = document.getElementById('adminLoginBtn');
+        const adminRegisterBtn = document.getElementById('adminRegisterBtn');
+        const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+        const adminManageBtn = document.getElementById('adminManageBtn');
+        
         const wordReciteBtn = document.getElementById('wordReciteBtn');
         const wordRevBtn = document.getElementById('wordRevBtn');
+        const IPABtn = document.getElementById('IPABtn'); // 添加音标训练按钮引用
         const listeningBtn = document.getElementById('listeningBtn');
         
-        // 检查用户是否已登录（从本地存储中恢复登录状态）
         function checkLoginStatus() {
-            // 先加载用户数据
             loadUsersFromStorage();
             
             const loggedInUser = localStorage.getItem('loggedInUser');
             if (loggedInUser) {
                 const userData = JSON.parse(loggedInUser);
-                if (users[userData.username]) {
-                    // 确保使用存储的密码
+                if (!userData.role && users[userData.username]) {
                     users[userData.username].isLoggedIn = true;
                     showUserInfo(userData.username);
                 }
             }
+            
+            checkAdminLoginStatus();
         }
         
-        // 显示用户信息
+        function checkAdminLoginStatus() {
+            loadAdminFromStorage();
+            
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            if (loggedInUser) {
+                const userData = JSON.parse(loggedInUser);
+                if (userData.role === 'admin' && adminUsers[userData.username]) {
+                    adminUsers[userData.username].isLoggedIn = true;
+                    showAdminInfo(userData.username);
+                }
+            }
+        }
+        
         function showUserInfo(username) {
             loginForm.style.display = 'none';
             userInfo.style.display = 'block';
             displayUsername.textContent = `欢迎，${username}同学`;
         }
         
-        // 处理登录
+        function showAdminInfo(username) {
+            adminLoginForm.style.display = 'none';
+            adminInfo.style.display = 'block';
+            displayAdminUsername.textContent = `欢迎，管理员 ${username}`;
+        }
+        
         function handleLogin() {
             const username = usernameInput.value.trim();
             const password = passwordInput.value.trim();
@@ -336,7 +467,6 @@
                 return;
             }
             
-            // 如果用户不存在，创建新用户
             if (!users[username]) {
                 alert('该用户不存在');
                 return;
@@ -347,24 +477,89 @@
                 return;
             }
             
-            // 登录成功
             users[username].isLoggedIn = true;
             localStorage.setItem('loggedInUser', JSON.stringify({
                 username: username,
                 password: password
             }));
             
-            // 保存更新后的用户数据
             saveUsersToStorage();
             
             showUserInfo(username);
             
-            // 清空输入框
             usernameInput.value = '';
             passwordInput.value = '';
         }
         
-        // 处理登出
+        function handleAdminRegister() {
+            const username = adminUsernameInput.value.trim();
+            const password = adminPasswordInput.value.trim();
+            
+            if (!username || !password) {
+                alert('请输入管理员用户名和密码');
+                return;
+            }
+            
+            if (Object.keys(adminUsers).length > 0) {
+                alert('当前已经有一个管理员了，请直接登录');
+                return;
+            }
+            
+            adminUsers[username] = {
+                password: password,
+                role: 'admin',
+                isLoggedIn: true
+            };
+            
+            saveAdminToStorage();
+            
+            localStorage.setItem('loggedInUser', JSON.stringify({
+                username: username,
+                role: 'admin',
+                password: password
+            }));
+            
+            showAdminInfo(username);
+            
+            adminUsernameInput.value = '';
+            adminPasswordInput.value = '';
+        }
+        
+        function handleAdminLogin() {
+            const username = adminUsernameInput.value.trim();
+            const password = adminPasswordInput.value.trim();
+            
+            if (!username || !password) {
+                alert('请输入管理员用户名和密码');
+                return;
+            }
+            
+            if (!adminUsers[username]) {
+                alert('该管理员不存在');
+                return;
+            }
+            
+            if (adminUsers[username].password !== password) {
+                alert('密码错误');
+                return;
+            }
+            
+            adminUsers[username].isLoggedIn = true;
+            
+            localStorage.setItem('loggedInUser', JSON.stringify({
+                username: username,
+                role: 'admin',
+                password: password
+            }));
+            
+            saveAdminToStorage();
+            
+            showAdminInfo(username);
+            
+            adminUsernameInput.value = '';
+            adminPasswordInput.value = '';
+        }
+        
         function handleLogout() {
             const loggedInUser = localStorage.getItem('loggedInUser');
             if (loggedInUser) {
@@ -379,7 +574,20 @@
             loginForm.style.display = 'block';
         }
         
-        // 更新密码
+        function handleAdminLogout() {
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            if (loggedInUser) {
+                const userData = JSON.parse(loggedInUser);
+                if (adminUsers[userData.username]) {
+                    adminUsers[userData.username].isLoggedIn = false;
+                }
+            }
+            
+            localStorage.removeItem('loggedInUser');
+            adminInfo.style.display = 'none';
+            adminLoginForm.style.display = 'block';
+        }
+        
         function updatePassword() {
             const newPassword = newPasswordInput.value.trim();
             const confirmPassword = confirmPasswordInput.value.trim();
@@ -410,7 +618,6 @@
                         password: newPassword
                     }));
                     
-                    // 保存更新后的用户数据
                     saveUsersToStorage();
                     
                     alert('密码修改成功');
@@ -421,7 +628,6 @@
             }
         }
         
-        // 事件监听
         loginBtn.addEventListener('click', handleLogin);
         logoutBtn.addEventListener('click', handleLogout);
         
@@ -445,7 +651,6 @@
         
         updatePasswordBtn.addEventListener('click', updatePassword);
         
-        // 添加回车键登录功能
         usernameInput.addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
@@ -460,7 +665,6 @@
             }
         });
         
-        // 点击模态框外部关闭模态框
         window.addEventListener('click', (event) => {
             if (event.target === passwordModal) {
                 passwordModal.style.display = 'none';
@@ -469,7 +673,6 @@
             }
         });
         
-        // 内容区域按钮事件
         wordReciteBtn.addEventListener('click', () => {
             if (!isUserLoggedIn()) {
                 alert('请先登录');
@@ -486,6 +689,15 @@
             window.location.href = './wordrev/wordrev.html';
         });
         
+        // 添加音标训练按钮事件监听
+        IPABtn.addEventListener('click', () => {
+            if (!isUserLoggedIn()) {
+                alert('请先登录');
+                return;
+            }
+            window.location.href = './IPA/IPA.html';
+        });
+        
         listeningBtn.addEventListener('click', () => {
             if (!isUserLoggedIn()) {
                 alert('请先登录');
@@ -494,13 +706,35 @@
             alert('听写训练功能即将上线');
         });
         
-        // 检查用户是否已登录
+        adminManageBtn.addEventListener('click', () => {
+            window.location.href = './manage.html';
+        });
+        
+        adminLogoutBtn.addEventListener('click', handleAdminLogout);
+        
+        adminLoginBtn.addEventListener('click', handleAdminLogin);
+        
+        adminRegisterBtn.addEventListener('click', handleAdminRegister);
+        
+        adminUsernameInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                adminPasswordInput.focus();
+            }
+        });
+        
+        adminPasswordInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                handleAdminLogin();
+            }
+        });
+        
         function isUserLoggedIn() {
             const loggedInUser = localStorage.getItem('loggedInUser');
             return !!loggedInUser;
         }
         
-        // 页面加载时检查登录状态
         document.addEventListener('DOMContentLoaded', checkLoginStatus);
     </script>
 </body>
