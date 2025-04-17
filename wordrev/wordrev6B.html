@@ -241,7 +241,6 @@
             <button class="unit-button" data-unit="4">Unit 4</button>
             <button class="unit-button" data-unit="5">Unit 1+</button>
             <button class="unit-button" data-unit="6">Unit 2+</button>
-            <button class="unit-button" data-unit="9">Extra</button>
         </div>
     </div>
     
@@ -288,9 +287,6 @@
         const recordKey = 'wordRev6B_Records';
         const dateKey = 'wordRev6B_RecordsDate';
         // 添加存储键名定义
-        const STORAGE_KEY = 'wordrev_6B';
-
-        // 更改 wordsByUnit 为 originalWordsByUnit，作为原始数据保留
         const originalWordsByUnit = {
             1: {
                 'younger': '更年轻的',
@@ -476,71 +472,11 @@
                 'surprising': '令人惊讶的',
                 'meaningful': '有意义的',
                 'continue': '继续'
-            },
-            9: {
-                'demo': '示范',
-                'demonstration': '演示'
             }
         };
 
-        // 添加 syncDataWithLocalStorage 函数，用于同步数据
-        function syncDataWithLocalStorage() {
-            // 1. 先尝试从localStorage获取数据（如果有的话）
-            const storedData = localStorage.getItem(STORAGE_KEY);
-            let wordsByUnit;
-            
-            if (storedData) {
-                // 如果有存储的数据，尝试加载它
-                console.log("从LocalStorage加载单词数据");
-                try {
-                    const parsedData = JSON.parse(storedData);
-                    
-                    // 关键修改：直接使用从localStorage获取的数据，而不是合并
-                    // 这样可以确保已修改或删除的词条能够被正确地更新
-                    wordsByUnit = parsedData;
-                    
-                    // 检查是否每个单元都至少有一些数据，如果没有则使用原始数据
-                    let hasAllUnits = true;
-                    for (const unitNum in originalWordsByUnit) {
-                        if (!wordsByUnit[unitNum] || Object.keys(wordsByUnit[unitNum]).length === 0) {
-                            hasAllUnits = false;
-                            break;
-                        }
-                    }
-                    
-                    if (!hasAllUnits) {
-                        // 如果缺少某些单元的数据，则使用原始数据作为基础
-                        console.log("检测到缺少部分单元数据，使用原始数据作为基础");
-                        wordsByUnit = JSON.parse(JSON.stringify(originalWordsByUnit));
-                        
-                        // 然后将localStorage中的数据覆盖到相应单元
-                        for (const unit in parsedData) {
-                            if (parsedData[unit] && Object.keys(parsedData[unit]).length > 0) {
-                                wordsByUnit[unit] = parsedData[unit]; 
-                            }
-                        }
-                    }
-                    
-                    console.log("数据已成功加载，完全替换原始数据");
-                } catch (error) {
-                    console.error("解析存储的数据时出错:", error);
-                    wordsByUnit = JSON.parse(JSON.stringify(originalWordsByUnit)); // 发生错误时使用原始数据
-                }
-            } else {
-                // 如果没有存储的数据，使用原始数据
-                console.log("未找到存储的数据，使用原始数据");
-                wordsByUnit = JSON.parse(JSON.stringify(originalWordsByUnit));
-            }
-            
-            // 2. 将数据保存回localStorage (包括初始数据)
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(wordsByUnit));
-            console.log("单词数据已保存到LocalStorage");
-            
-            return wordsByUnit;
-        }
-        
-        // 在原始 wordsByUnit 变量声明后执行数据同步，将结果赋值给 wordsByUnit
-        const wordsByUnit = syncDataWithLocalStorage();
+        // 使用原始的单词数据
+        const wordsByUnit = originalWordsByUnit;
 
         let activeUnits = new Set();
         let words = {};
